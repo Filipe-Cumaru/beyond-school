@@ -4,7 +4,6 @@
             <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-textarea
-            color="teal" 
             label="No que você está pensando?">
         </v-textarea>
         <v-btn>
