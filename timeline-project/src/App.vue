@@ -1,7 +1,11 @@
 <template>
   <v-app>
     <v-main>
-      <StatusBarCard @remove-all-publications='removeAllPublications'></StatusBarCard>
+      <StatusBarCard 
+        @remove-all-publications='removeAllPublications'></StatusBarCard>
+      <div class="new-publication-container">
+        <NewPublication @add-new-publication='addNewPublication'></NewPublication>
+      </div>
       <div class='publications-container'>
         <div v-for='(pub, i) in publications' :key='i'>
           <PublicationCard 
@@ -16,12 +20,12 @@
 
 <script>
 import PublicationCard from "./components/PublicationCard.vue"
-// import NewPublicationScreen from "./components/NewPublicationScreen.vue"
+import NewPublication from "./components/NewPublication.vue"
 import StatusBarCard from "./components/StatusBarCard.vue"
 export default {
   components: {
     PublicationCard,
-    // NewPublicationScreen,
+    NewPublication,
     StatusBarCard
   },
   data() {
@@ -45,6 +49,9 @@ export default {
         i++
       }
       this.publications.splice(i, 1)
+    },
+    addNewPublication: function (newText) {
+      this.publications.push({ text: newText, img: undefined })
     }
   },
   computed: {
@@ -54,9 +61,15 @@ export default {
 </script>
 
 <style>
-  .publications-container {
+  .new-publication-container {
     width: 100%;
     padding-top: 64px;
+    padding-bottom: 0px;
+  }
+  .publications-container {
+    width: 100%;
+    padding-top: 0px;
     padding-bottom: 56px;
+    margin: 0;
   }
 </style>
