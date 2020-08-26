@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <StatusBarCard></StatusBarCard>
+      <StatusBarCard @remove-all-publications='clearPublications'></StatusBarCard>
       <div class='publications-container'>
         <div v-for='(pub, i) in publications' :key='i'>
           <PublicationCard :textProp="pub.text" :imgProp="pub.img"></PublicationCard>
@@ -30,7 +30,9 @@ export default {
     }
   },
   methods: {
-
+    clearPublications: function () {
+      this.publications = []
+    }
   },
   computed: {
 
