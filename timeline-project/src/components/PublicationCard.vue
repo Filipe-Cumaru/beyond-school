@@ -43,7 +43,7 @@ export default {
     data() {
         return {
             // Texto modificado, caso edição.
-            modifiedText: '',
+            modifiedText: this.$props.textProp,
             // Flag para ativar/desativar a caixa de diálogo de edição.
             dialog: false
         }
