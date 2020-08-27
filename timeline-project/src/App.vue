@@ -31,7 +31,6 @@ export default {
   data() {
     return {
       publications: [
-        { text: 'dale', img: '../assets/logo.png' },
         { text: 'uma publi massa', img: undefined }
       ]
     }
@@ -50,12 +49,13 @@ export default {
       }
       this.publications.splice(i, 1)
     },
-    addNewPublication: function (newText) {
-      this.publications.push({ text: newText, img: undefined })
+    addNewPublication: function (newText, newImg) {
+      let newImgData = undefined
+      if (newImg != undefined) {
+        newImgData = localStorage.getItem(newImg)
+      }
+      this.publications.push({ text: newText, img: newImgData })
     }
-  },
-  computed: {
-
   }
 }
 </script>
