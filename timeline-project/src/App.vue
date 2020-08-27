@@ -10,7 +10,7 @@
       </div>
       <!-- Inserção das publicações já existentes. -->
       <div class='publications-container'>
-        <div v-for='(pub, i) in $store.getters.getPublications' :key='i'>
+        <div v-for='(pub, i) in getPublications' :key='i'>
           <PublicationCard 
             :textProp="pub.text" 
             :imgProp="pub.img" ></PublicationCard>
@@ -24,19 +24,19 @@
 import PublicationCard from "./components/PublicationCard.vue"
 import NewPublication from "./components/NewPublication.vue"
 import StatusBarCard from "./components/StatusBarCard.vue"
+import { mapGetters } from 'vuex'
 export default {
   components: {
     PublicationCard,
     NewPublication,
     StatusBarCard
   },
-  data() {
-    return {
-      user: 'Eu'
-    }
+  computed: {
+    ...mapGetters(['getPublications']),
+    ...mapGetters('darkTheme', ['getEnableDarkTheme'])
   },
-  methods: {
-    
+  beforeMount() {
+    this.$vuetify.theme.dark = this.getEnableDarkTheme
   }
 }
 </script>

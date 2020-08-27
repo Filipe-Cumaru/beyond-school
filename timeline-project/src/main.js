@@ -14,14 +14,40 @@ const vuexPersist = new VuexPersistence({
   key: 'timeline',
   storage: window.localStorage,
   modules: [
-    'auth',
-    'common'
+    'darkTheme'
   ]
 })
+
+// TODO: Modificar tema dentro da aplicação
+const darkTheme = {
+  namespaced: true,
+  state: {
+    enableDarkTheme: true
+  },
+  getters: {
+    getEnableDarkTheme: function (state) {
+      return state.enableDarkTheme
+    }
+  },
+  actions: {
+    switchTheme: function ({ commit }) {
+      commit('setDarkTheme')
+    }
+  },
+  mutations: {
+    setDarkTheme: function (state) {
+      state.enableDarkTheme = !state.enableDarkTheme
+      vuetify.framework.theme.dark = state.enableDarkTheme
+    }
+  }
+}
 
 const store = new Vuex.Store({
   state: {
     publications: []
+  },
+  modules: {
+    darkTheme: darkTheme
   },
   getters: {
     getPublications: function (state) {
