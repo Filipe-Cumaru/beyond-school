@@ -1,7 +1,7 @@
 <template>
     <v-app-bar fixed>
         Passarinho
-        <v-btn @click="emitRemoveAllPublications">
+        <v-btn @click="removeAllPublications">
           <v-icon>mdi-trash-can-outline</v-icon>
         </v-btn>
     </v-app-bar>
@@ -10,8 +10,8 @@
 <script>
 export default {
     methods: {
-        emitRemoveAllPublications: function () {
-            this.$emit('remove-all-publications')
+        removeAllPublications: function () {
+            this.$store.dispatch('removeAllPublications')
         }
     }
 }

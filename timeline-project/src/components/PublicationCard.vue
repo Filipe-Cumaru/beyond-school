@@ -26,7 +26,7 @@
             </v-card>
         </v-dialog>
         <!-- Botão para excluir uma publicação -->
-        <v-btn @click='emitRemoveSinglePublication'>
+        <v-btn @click='removeSinglePublication'>
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <!-- Componente para a exibição da imagem, se existente. -->
@@ -50,11 +50,12 @@ export default {
     },
     props: ['textProp', 'imgProp'],
     methods: {
-        emitRemoveSinglePublication: function () {
-            this.$emit('remove-single-publication', this.$props.textProp, this.$props.imgProp)
+        // Método para a remoção de uma única publicação.
+        removeSinglePublication: function () {
+            this.$store.dispatch('removeSinglePublication', [this.$props.textProp, this.$props.imgProp])
         },
         saveModifiedText: function () {
-            this.$emit('modified-text', this.$props.textProp, this.$props.imgProp, this.modifiedText)
+            this.$store.dispatch('editPublicationText', [this.$props.textProp, this.$props.imgProp, this.modifiedText])
             this.dialog = false
         }
     }

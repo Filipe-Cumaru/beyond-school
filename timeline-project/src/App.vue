@@ -3,20 +3,17 @@
     <v-main>
       <!-- Componente da barra de status com evento para remoção de
            todas publicações. -->
-      <StatusBarCard 
-        @remove-all-publications='removeAllPublications'></StatusBarCard>
+      <StatusBarCard></StatusBarCard>
       <!-- Componente para a criação de uma nova publicação. -->
       <div class="new-publication-container">
-        <NewPublication @add-new-publication='addNewPublication'></NewPublication>
+        <NewPublication></NewPublication>
       </div>
       <!-- Inserção das publicações já existentes. -->
       <div class='publications-container'>
-        <div v-for='(pub, i) in publications' :key='i'>
+        <div v-for='(pub, i) in $store.getters.getPublications' :key='i'>
           <PublicationCard 
             :textProp="pub.text" 
-            :imgProp="pub.img" 
-            @remove-single-publication='removeSinglePublication'
-            @modified-text='modifyText'></PublicationCard>
+            :imgProp="pub.img" ></PublicationCard>
         </div>
       </div>
     </v-main>
@@ -35,47 +32,11 @@ export default {
   },
   data() {
     return {
-      publications: []
+      user: 'Eu'
     }
   },
   methods: {
-    // Método para a remoção de todas as publicações.
-    removeAllPublications: function () {
-      this.publications = []
-    },
-    // Método para a remoção de uma única publicação.
-    removeSinglePublication: function (text, img) {
-      let i = 0
-      // Procura-se a publicação do array publications
-      // cujo conteúdo é o mesmo dos argumentos text e img.
-      for (let p of this.publications) {
-        if (p.text === text && p.img === img) {
-          break
-        }
-        i++
-      }
-      this.publications.splice(i, 1)
-    },
-    // Adiciona uma nova publicação.
-    addNewPublication: function (newText, newImg) {
-      let newImgData = undefined
-      // Se há uma imagem, então ela será recuperada do localStorage.
-      if (newImg != undefined) {
-        newImgData = localStorage.getItem(newImg)
-      }
-      this.publications.push({ text: newText, img: newImgData })
-    },
-    // Método para a edição do texto de uma publicação já postada.
-    modifyText: function (oldText, img, newText) {
-      let i = 0
-      for (let p of this.publications) {
-        if (p.text === oldText && p.img === img) {
-          break
-        }
-        i++
-      }
-      this.publications[i].text = newText
-    }
+    
   }
 }
 </script>

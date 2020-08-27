@@ -12,7 +12,7 @@
             placeholder='Clique para selecionar imagem'
             @change="setNewPublicationImage"></v-file-input>
         <!-- Botão para confirmar a publicação do post. -->
-        <v-btn @click="emitAddNewPublication">
+        <v-btn @click="addNewPublication">
             <v-icon>mdi-check</v-icon>
         </v-btn>
     </v-card>
@@ -29,11 +29,10 @@ export default {
         }
     },
     methods: {
-        // Método para emitir o evento de criação de uma nova
-        // publicação
-        emitAddNewPublication: function () {
+        // Método para adicionar uma nova publicação ao store.
+        addNewPublication: function () {
             if (this.newPublicationText !== '' || this.newPublicationImg !== undefined) {
-                this.$emit('add-new-publication', this.newPublicationText, this.newPublicationImg)
+                this.$store.dispatch('addPublication', { text: this.newPublicationText, img: this.newPublicationImg })
                 this.newPublicationText = ''
                 this.newPublicationImg = undefined
             }
@@ -45,8 +44,8 @@ export default {
                 // ... o arquivo é lido como base64 e o valor é
                 // repassado ao componente pai usando o localStorage.
                 var reader = new FileReader()
-                this.newPublicationImg = file.name
                 reader.readAsDataURL(file)
+                this.newPublicationImg = file.name
                 reader.onload = function () {
                     localStorage.setItem(file.name, reader.result)
                 }
