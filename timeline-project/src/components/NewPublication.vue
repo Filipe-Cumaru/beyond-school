@@ -7,6 +7,7 @@
         <v-file-input 
             prepend-icon='mdi-image'
             :chips='true'
+            placeholder='Clique para selecionar imagem'
             @change="setNewPublicationImage"></v-file-input>
         <v-btn @click="emitAddNewPublication">
             <v-icon>mdi-check</v-icon>

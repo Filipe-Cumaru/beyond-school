@@ -11,7 +11,8 @@
           <PublicationCard 
             :textProp="pub.text" 
             :imgProp="pub.img" 
-            @remove-single-publication='removeSinglePublication'></PublicationCard>
+            @remove-single-publication='removeSinglePublication'
+            @modified-text='modifyText'></PublicationCard>
         </div>
       </div>
     </v-main>
@@ -30,9 +31,7 @@ export default {
   },
   data() {
     return {
-      publications: [
-        { text: 'uma publi massa', img: undefined }
-      ]
+      publications: []
     }
   },
   methods: {
@@ -55,6 +54,16 @@ export default {
         newImgData = localStorage.getItem(newImg)
       }
       this.publications.push({ text: newText, img: newImgData })
+    },
+    modifyText: function (oldText, img, newText) {
+      let i = 0
+      for (let p of this.publications) {
+        if (p.text === oldText && p.img === img) {
+          break
+        }
+        i++
+      }
+      this.publications[i].text = newText
     }
   }
 }

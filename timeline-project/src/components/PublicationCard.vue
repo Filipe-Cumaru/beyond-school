@@ -1,8 +1,26 @@
 <template>
     <v-card outlined class='ma-3'>
-        <v-btn>
-          <v-icon>mdi-pencil-outline</v-icon>
-        </v-btn>
+        <v-dialog v-model="dialog" persistent max-width="600px">
+            <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                v-bind="attrs"
+                v-on="on"
+                >
+                    <v-icon>mdi-pencil-outline</v-icon>
+                </v-btn>
+            </template>
+            <v-card>
+                <v-card-actions>
+                    <v-textarea
+                        v-model='modifiedText'
+                        placeholder="Digite o novo texto">
+                    </v-textarea>
+                    <v-btn @click="saveModifiedText">
+                        <v-icon>mdi-check</v-icon>
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
         <v-btn @click='emitRemoveSinglePublication'>
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -16,10 +34,20 @@
 
 <script>
 export default {
+    data() {
+        return {
+            modifiedText: '',
+            dialog: false
+        }
+    },
     props: ['textProp', 'imgProp'],
     methods: {
         emitRemoveSinglePublication: function () {
             this.$emit('remove-single-publication', this.$props.textProp, this.$props.imgProp)
+        },
+        saveModifiedText: function () {
+            this.$emit('modified-text', this.$props.textProp, this.$props.imgProp, this.modifiedText)
+            this.dialog = false
         }
     }
 }
