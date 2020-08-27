@@ -1,6 +1,6 @@
 <template>
     <v-app-bar fixed>
-        Facelivro
+        Sabiá
         <v-btn @click="emitRemoveAllPublications">
           <v-icon>mdi-trash-can-outline</v-icon>
         </v-btn>

@@ -1,7 +1,9 @@
 <template>
     <v-card outlined class='ma-3'>
+        <!-- Caixa de diálogo para a edição do texto publicado. -->
         <v-dialog v-model="dialog" persistent max-width="600px">
             <template v-slot:activator="{ on, attrs }">
+                <!-- Botão de edição-->
                 <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -9,6 +11,8 @@
                     <v-icon>mdi-pencil-outline</v-icon>
                 </v-btn>
             </template>
+            <!-- Caixa de texto dentro da caixa de diálogo onde o novo
+                texto será digitado. -->
             <v-card>
                 <v-card-actions>
                     <v-textarea
@@ -21,9 +25,11 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <!-- Botão para excluir uma publicação -->
         <v-btn @click='emitRemoveSinglePublication'>
           <v-icon>mdi-close</v-icon>
         </v-btn>
+        <!-- Componente para a exibição da imagem, se existente. -->
         <v-img v-if='imgProp != undefined'
             :src='imgProp'
             height='100%'
@@ -36,7 +42,9 @@
 export default {
     data() {
         return {
+            // Texto modificado, caso edição.
             modifiedText: '',
+            // Flag para ativar/desativar a caixa de diálogo de edição.
             dialog: false
         }
     },
