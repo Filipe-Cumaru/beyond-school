@@ -1,6 +1,6 @@
 <template>
     <v-app-bar fixed>
-        Sabiá
+        Passarinho
         <v-btn @click="emitRemoveAllPublications">
           <v-icon>mdi-trash-can-outline</v-icon>
         </v-btn>
