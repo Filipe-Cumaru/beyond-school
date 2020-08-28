@@ -1,35 +1,39 @@
 <template>
-  <div class="text-right">
-    <v-menu top :offset-y="true">
-      <template v-slot:activator="{ on, attrs }">
+    <v-speed-dial
+      v-model="fab"
+      :top='false'
+      :bottom='true'
+      :right='true'
+      :left='false'
+      :direction='"top"'
+      :open-on-hover='false'
+      :transition="'slide-y-reverse-transition'"
+    >
+      <template v-slot:activator>
         <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
+          v-model="fab"
+          color="blue darken-2"
+          fab
         >
-          <v-icon>mdi-dots-vertical</v-icon>
+          <v-icon></v-icon>
+          <v-icon v-if="fab">mdi-close</v-icon>
+          <v-icon v-else>mdi-dots-vertical</v-icon>
         </v-btn>
       </template>
-
-      <v-list>
-        <v-list-item
-          v-for="(item, index) in items"
-          :key="index"
-          @click="handleItemClick(item.onclick)"
-        >
-          <v-list-item-title>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
-  </div>
+      <v-btn 
+        fab
+        small
+        @click="handleItemClick(item.onclick)"
+        v-for="(item, index) in this.items" :key=index>
+        <v-icon> {{ item.icon }} </v-icon>
+      </v-btn>
+    </v-speed-dial>
 </template>
 
 <script>
 export default {
     data: () => ({
+      fab: false,
       items: [
         { icon: 'mdi-account', onclick: 1},
         { icon: 'mdi-pencil-plus-outline', onclick: 2},
@@ -61,5 +65,11 @@ export default {
 </script>
 
 <style>
+  #create .v-speed-dial {
+    position: absolute;
+  }
 
+  #create .v-btn--floating {
+    position: relative;
+  }
 </style>
