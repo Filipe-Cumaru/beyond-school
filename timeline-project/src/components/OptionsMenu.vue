@@ -1,21 +1,18 @@
 <template>
+    <v-card>
     <v-speed-dial
+      fab
+      bottom
+      right
+      fixed
       v-model="fab"
-      :top='false'
-      :bottom='true'
-      :right='true'
-      :left='false'
-      :direction='"top"'
-      :open-on-hover='false'
       :transition="'slide-y-reverse-transition'"
     >
       <template v-slot:activator>
         <v-btn
           v-model="fab"
-          color="blue darken-2"
           fab
         >
-          <v-icon></v-icon>
           <v-icon v-if="fab">mdi-close</v-icon>
           <v-icon v-else>mdi-dots-vertical</v-icon>
         </v-btn>
@@ -28,6 +25,7 @@
         <v-icon> {{ item.icon }} </v-icon>
       </v-btn>
     </v-speed-dial>
+    </v-card>
 </template>
 
 <script>
@@ -65,11 +63,4 @@ export default {
 </script>
 
 <style>
-  #create .v-speed-dial {
-    position: absolute;
-  }
-
-  #create .v-btn--floating {
-    position: relative;
-  }
 </style>

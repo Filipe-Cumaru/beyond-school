@@ -7,7 +7,6 @@
       <div class="new-publication-container">
         <NewPublication></NewPublication>
       </div>
-      <OptionsMenu></OptionsMenu>
       <!-- Inserção das publicações já existentes. -->
       <div class='publications-container'>
         <div v-for='(pub, i) in getPublications' :key='i'>
@@ -17,6 +16,7 @@
             :userProp="pub.user"></PublicationCard>
         </div>
       </div>
+      <OptionsMenu></OptionsMenu>
     </v-main>
 </template>
 
