@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
+import ProfilePage from './components/ProfilePage.vue'
+import MainPage from './components/MainPage.vue'
 import vuetify from './plugins/vuetify';
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
@@ -18,7 +20,6 @@ const vuexPersist = new VuexPersistence({
   ]
 })
 
-// TODO: Modificar tema dentro da aplicação
 const darkTheme = {
   namespaced: true,
   state: {
@@ -42,16 +43,49 @@ const darkTheme = {
   }
 }
 
+const usersStatus = {
+  namespaced: true,
+  state: {
+    users: [
+      {name: 'Eu', public: true},
+      {name: 'Gandalf', public: true},
+      {name: 'Theoden', public: false}
+    ]
+  },
+  getters: {
+    getUserPublicStatus: (state) => (name) => {
+      const isPublic = state.users.filter(function (u) {
+        return u.name === name
+      }).pop().public
+      return isPublic
+    }
+  }
+}
+
 const store = new Vuex.Store({
   state: {
-    publications: []
+    publications: [
+      { text: 'YOU SHALL NOT PASS!', img: undefined, user: 'Gandalf' },
+      { text: 'All We Have To Do Is Decide What To Do With The Time That Is Given To Us.', img: undefined, user: 'Gandalf' },
+      { text: `Arise, arise, Riders of Théoden!
+        Fell deeds awake: fire and slaughter! Spears shall be shaken,
+        Shields shall be splintered, a sword-day, a red day, ere the sun rises!
+        Ride now, ride now! Ride to Gondor! Death! Death! Death! Forth Eorlingas`, img: undefined, user: 'Theoden'}
+    ]
   },
   modules: {
-    darkTheme: darkTheme
+    darkTheme: darkTheme,
+    usersStatus: usersStatus
   },
   getters: {
     getPublications: function (state) {
       return state.publications
+    },
+    getPublicationsFromUser: (state) => (user) => {
+      const pubsFromUser = state.publications.filter(function (p) {
+        return p.user === user
+      })
+      return pubsFromUser
     }
   },
   actions: {
@@ -70,7 +104,7 @@ const store = new Vuex.Store({
   },
   mutations: {
     pushPublication: function (state, publication) {
-      let newPub = { text: publication.text, img: undefined }
+      let newPub = { text: publication.text, img: undefined, user: 'Eu'}
       if (publication.img !== undefined) {
         const imgData = localStorage.getItem(publication.img)
         newPub.img = imgData
@@ -113,7 +147,11 @@ const store = new Vuex.Store({
 const routes = [
   {
     path: '/',
-    component: App
+    component: MainPage
+  },
+  {
+    path: '/profile/:name',
+    component: ProfilePage
   }
 ]
 

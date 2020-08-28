@@ -29,6 +29,9 @@
         <v-btn @click='removeSinglePublication'>
           <v-icon>mdi-close</v-icon>
         </v-btn>
+        <v-card-title @click='openProfilePage(userProp)'>
+            {{ userProp }}
+        </v-card-title>
         <!-- Componente para a exibição da imagem, se existente. -->
         <v-img v-if='imgProp != undefined'
             :src='imgProp'
@@ -48,7 +51,7 @@ export default {
             dialog: false
         }
     },
-    props: ['textProp', 'imgProp'],
+    props: ['textProp', 'imgProp', 'userProp'],
     methods: {
         // Método para a remoção de uma única publicação.
         removeSinglePublication: function () {
@@ -57,6 +60,9 @@ export default {
         saveModifiedText: function () {
             this.$store.dispatch('editPublicationText', [this.$props.textProp, this.$props.imgProp, this.modifiedText])
             this.dialog = false
+        },
+        openProfilePage: function (username) {
+            this.$router.push(`/profile/${username}`)
         }
     }
 }
