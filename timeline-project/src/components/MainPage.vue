@@ -7,6 +7,7 @@
       <div class="new-publication-container">
         <NewPublication></NewPublication>
       </div>
+      <OptionsMenu></OptionsMenu>
       <!-- Inserção das publicações já existentes. -->
       <div class='publications-container'>
         <div v-for='(pub, i) in getPublications' :key='i'>
@@ -23,12 +24,14 @@
 import PublicationCard from "./PublicationCard.vue"
 import NewPublication from "./NewPublication.vue"
 import StatusBarCard from "./StatusBarCard.vue"
+import OptionsMenu from './OptionsMenu.vue'
 import { mapGetters } from 'vuex'
 export default {
   components: {
     PublicationCard,
     NewPublication,
-    StatusBarCard
+    StatusBarCard,
+    OptionsMenu
   },
   computed: {
     ...mapGetters(['getPublications']),

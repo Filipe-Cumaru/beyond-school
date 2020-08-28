@@ -3,7 +3,7 @@
         <v-btn v-if="enableGoBackButtonProp">
             <v-icon @click='$router.push("/")'>mdi-arrow-left</v-icon>
         </v-btn>
-        BeyondTimeline
+        <v-card-title>BeyondTimeline</v-card-title>
         <v-btn @click="removeAllPublications">
           <v-icon>mdi-trash-can-outline</v-icon>
         </v-btn>
@@ -26,3 +26,7 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+
+</style>

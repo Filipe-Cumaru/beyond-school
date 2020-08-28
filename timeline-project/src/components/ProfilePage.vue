@@ -36,9 +36,9 @@ export default {
 <style>
   .publications-container {
     width: 100%;
-    padding-top: 0px;
+    padding-top: 64px;
     padding-bottom: 56px;
-    margin-top: 64px;
+    margin-top: 0;
   }
   .warning-container {
     width: 100%;
