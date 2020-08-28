@@ -20,9 +20,12 @@
       </template>
     
     <!-- Botão de acesso à página do perfil do usuário. -->
+    <!-- REFACTOR: Tornar acesso à página do perfil dinâmico, i.e.,
+        dependente do nome do usuário logado. -->
       <v-btn 
         fab
-        small>
+        small
+        @click='$router.push(`/profile/Eu`)'>
         <v-icon>mdi-account</v-icon>
       </v-btn>
 
