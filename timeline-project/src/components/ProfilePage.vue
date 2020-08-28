@@ -1,6 +1,8 @@
 <template>
   <v-main>
-      <StatusBarCard :enableGoBackButtonProp='true'></StatusBarCard>
+      <div class="statusbar-container">
+        <StatusBarCard :enableGoBackButtonProp="true"></StatusBarCard>
+      </div>
       <!-- Inserção das publicações do usuário. -->
       <div 
         v-if="getUserPublicStatus($route.params.name)"
@@ -45,5 +47,10 @@ export default {
     padding-top: 0px;
     padding-bottom: 56px;
     margin-top: 64px;
+  }
+  .statusbar-container {
+    width: 100%;
+    padding-top: 64px;
+    padding-bottom: 0px;
   }
 </style>

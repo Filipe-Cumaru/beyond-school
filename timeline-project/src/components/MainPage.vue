@@ -24,7 +24,9 @@
     </v-dialog>
       <!-- Componente da barra de status com evento para remoção de
            todas publicações. -->
-      <StatusBarCard :enableGoBackButtonProp="false"></StatusBarCard>
+      <div class="statusbar-container">
+        <StatusBarCard :enableGoBackButtonProp="false"></StatusBarCard>
+      </div>
       <!-- Inserção das publicações já existentes. -->
       <div class='publications-container'>
         <div v-for='(pub, i) in getPublications' :key='i'>
@@ -100,7 +102,7 @@ export default {
 </script>
 
 <style>
-  .new-publication-container {
+  .statusbar-container {
     width: 100%;
     padding-top: 64px;
     padding-bottom: 0px;
