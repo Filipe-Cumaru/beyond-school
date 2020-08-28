@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center">
+  <div class="text-right">
     <v-menu top :offset-y="true">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -16,6 +16,7 @@
         <v-list-item
           v-for="(item, index) in items"
           :key="index"
+          @click="handleItemClick(item.onclick)"
         >
           <v-list-item-title>
             <v-icon>{{ item.icon }}</v-icon>
@@ -30,12 +31,32 @@
 export default {
     data: () => ({
       items: [
-        { icon: 'mdi-account' },
-        { icon: 'mdi-pencil-plus-outline' },
-        { icon: 'mdi-trash-can-outline' },
-        { icon: 'mdi-brightness-6' },
+        { icon: 'mdi-account', onclick: 1},
+        { icon: 'mdi-pencil-plus-outline', onclick: 2},
+        { icon: 'mdi-trash-can-outline', onclick: 3},
+        { icon: 'mdi-brightness-6', onclick: 4},
       ]
     }),
+    methods: {
+        handleItemClick: function (key) {
+            switch (key) {
+                case 3:
+                    this.removeAllPublications()
+                    break;
+                case 4:
+                    this.changeTheme()
+                    break;
+                default:
+                    break;
+            }
+        },
+        removeAllPublications: function () {
+            this.$store.dispatch('removeAllPublications')
+        },
+        changeTheme: function () {
+            this.$store.dispatch('darkTheme/switchTheme')
+        }
+    }
 }
 </script>
 
