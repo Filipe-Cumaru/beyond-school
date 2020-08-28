@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <!-- Botão flutuante para acessar as opções da aplicação. -->
     <v-speed-dial
       fab
       bottom
@@ -8,6 +8,7 @@
       v-model="fab"
       :transition="'slide-y-reverse-transition'"
     >
+    <!-- Lógica para alternar entre ícones do menu flutuante. -->
       <template v-slot:activator>
         <v-btn
           v-model="fab"
@@ -17,46 +18,52 @@
           <v-icon v-else>mdi-dots-vertical</v-icon>
         </v-btn>
       </template>
+    
+    <!-- Botão de acesso à página do perfil do usuário. -->
+      <v-btn 
+        fab
+        small>
+        <v-icon>mdi-account</v-icon>
+      </v-btn>
+
+    <!-- Botão para a publicação de um novo post.-->
+      <v-btn
+          fab
+          small
+          @click="emitOpenNewPublicationDialog">
+          <v-icon>mdi-pencil-plus-outline</v-icon>
+      </v-btn>
+
       <v-btn 
         fab
         small
-        @click="handleItemClick(item.onclick)"
-        v-for="(item, index) in this.items" :key=index>
-        <v-icon> {{ item.icon }} </v-icon>
+        @click="removeAllPublications">
+        <v-icon>mdi-trash-can-outline</v-icon>
+      </v-btn>
+
+      <v-btn 
+        fab
+        small
+        @click="changeTheme">
+        <v-icon>mdi-brightness-6</v-icon>
       </v-btn>
     </v-speed-dial>
-    </v-card>
 </template>
 
 <script>
 export default {
     data: () => ({
-      fab: false,
-      items: [
-        { icon: 'mdi-account', onclick: 1},
-        { icon: 'mdi-pencil-plus-outline', onclick: 2},
-        { icon: 'mdi-trash-can-outline', onclick: 3},
-        { icon: 'mdi-brightness-6', onclick: 4},
-      ]
+      fab: false
     }),
     methods: {
-        handleItemClick: function (key) {
-            switch (key) {
-                case 3:
-                    this.removeAllPublications()
-                    break;
-                case 4:
-                    this.changeTheme()
-                    break;
-                default:
-                    break;
-            }
-        },
         removeAllPublications: function () {
             this.$store.dispatch('removeAllPublications')
         },
         changeTheme: function () {
             this.$store.dispatch('darkTheme/switchTheme')
+        },
+        emitOpenNewPublicationDialog: function () {
+          this.$emit('open-new-publication-dialog')
         }
     }
 }
