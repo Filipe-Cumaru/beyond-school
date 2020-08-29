@@ -31,7 +31,7 @@
     <v-dialog v-model="removeAllPublicationsDialog" persistent scrollable max-width="600px">
     <v-container class="grey lighten-5">
       <v-row no-gutters>
-        <h4>Deseja apagar todas as publicações da linha do tempo?</h4>
+        <h3>Deseja apagar todas as publicações da linha do tempo?</h3>
       </v-row>
       <v-row>
         <v-col class="text-center">

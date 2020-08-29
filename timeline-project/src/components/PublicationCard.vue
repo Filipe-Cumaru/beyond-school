@@ -2,17 +2,24 @@
     <v-main>
     <!-- Caixa de diálogo para a edição do texto publicado. -->
     <v-dialog v-model="dialog" persistent max-width="600px">
-        <v-card>
-            <v-card-actions>
-                <v-textarea
-                    v-model='modifiedText'
-                    placeholder="Digite o novo texto">
-                </v-textarea>
-                <v-btn @click="saveModifiedText">
-                    <v-icon>mdi-check</v-icon>
-                </v-btn>
-            </v-card-actions>
-        </v-card>
+        <v-container class="grey lighten-5">
+        <v-textarea
+          v-model='modifiedText'
+          placeholder="Digite o novo texto">
+        </v-textarea>
+        <v-row>
+          <v-col class="text-center">
+            <v-btn icon color="red" @click="dialog = false; modifiedText = textProp">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col class="text-center">
+            <v-btn icon color="success" @click="saveModifiedText">
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-dialog>
     <v-card outlined class='ma-3'>
         <v-card-title @click='openProfilePage(userProp)'>
