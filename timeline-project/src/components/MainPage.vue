@@ -2,8 +2,7 @@
   <v-main>
     <!-- Caixa de diálogo para criar uma nova publicação. -->
     <v-dialog v-model="newPulicationDialog" persistent scrollable max-width="600px">
-    <v-card>
-      <v-card-actions>
+      <v-container class="grey lighten-5">
         <v-textarea
           v-model='newPublicationText'
           placeholder="No que você está pensando?">
@@ -13,48 +12,62 @@
           :chips='true'
           placeholder='Clique para selecionar imagem'
           @change="setNewPublicationImage"></v-file-input>
-        <v-btn @click="discardChanges">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-btn @click="addNewPublication">
-          <v-icon>mdi-check</v-icon>
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+        <v-row>
+          <v-col class="text-center">
+            <v-btn icon color="red" @click="discardChanges">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col class="text-center">
+            <v-btn icon color="success" @click="addNewPublication">
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-dialog>
 
     <!-- Caixa de diálogo para apagar todas publicações na linha do tempo. -->
     <v-dialog v-model="removeAllPublicationsDialog" persistent scrollable max-width="600px">
-    <v-card>
-      Deseja limpar a linha do tempo?
-      <v-card-actions>
-        <v-btn @click="removeAllPublications">
-          Sim
-        </v-btn>
-        <v-btn @click="removeAllPublicationsDialog = false">
-          Não
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+    <v-container class="grey lighten-5">
+      <v-row no-gutters>
+        <h4>Deseja apagar todas as publicações da linha do tempo?</h4>
+      </v-row>
+      <v-row>
+        <v-col class="text-center">
+          <v-btn @click="removeAllPublications">
+            Sim
+          </v-btn>
+        </v-col>
+        <v-col class="text-center">
+          <v-btn @click="removeAllPublicationsDialog = false">
+            Não
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
     </v-dialog>
 
-      <!-- Componente da barra de status com evento para remoção de
-           todas publicações. -->
-      <div class="statusbar-container">
-        <StatusBarCard :enableGoBackButtonProp="false"></StatusBarCard>
+    <!-- Componente da barra de status com evento para remoção de
+          todas publicações. -->
+    <div class="statusbar-container">
+      <StatusBarCard :enableGoBackButtonProp="false"></StatusBarCard>
+    </div>
+
+    <!-- Inserção das publicações já existentes. -->
+    <div class='publications-container'>
+      <div v-for='(pub, i) in getPublications' :key='i'>
+        <PublicationCard 
+          :textProp="pub.text" 
+          :imgProp="pub.img"
+          :userProp="pub.user"></PublicationCard>
       </div>
-      <!-- Inserção das publicações já existentes. -->
-      <div class='publications-container'>
-        <div v-for='(pub, i) in getPublications' :key='i'>
-          <PublicationCard 
-            :textProp="pub.text" 
-            :imgProp="pub.img"
-            :userProp="pub.user"></PublicationCard>
-        </div>
-      </div>
-      <OptionsMenu 
-        @open-new-publication-dialog='newPulicationDialog=true'
-        @remove-all-publications-dialog='removeAllPublicationsDialog=true'></OptionsMenu>
+    </div>
+
+    <OptionsMenu 
+      @open-new-publication-dialog='newPulicationDialog=true'
+      @remove-all-publications-dialog='removeAllPublicationsDialog=true'></OptionsMenu>
+      
     </v-main>
 </template>
 

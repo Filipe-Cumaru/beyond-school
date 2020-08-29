@@ -1,6 +1,6 @@
 <template>
     <v-app-bar fixed>
-        <v-btn v-if="enableGoBackButtonProp">
+        <v-btn icon v-if="enableGoBackButtonProp">
             <v-icon @click='$router.push("/")'>mdi-arrow-left</v-icon>
         </v-btn>
         <v-card-title>BeyondTimeline</v-card-title>
