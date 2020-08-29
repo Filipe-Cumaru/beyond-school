@@ -37,13 +37,15 @@
           <v-icon>mdi-pencil-plus-outline</v-icon>
       </v-btn>
 
+      <!-- Botão para a remoção de todas publicações na linha do tempo. -->
       <v-btn 
         fab
         small
-        @click="removeAllPublications">
+        @click="emitOpenRemoveAllPublicationsDialog">
         <v-icon>mdi-trash-can-outline</v-icon>
       </v-btn>
 
+      <!-- Botão para alternar entre o modo escuro/claro. -->
       <v-btn 
         fab
         small
@@ -55,20 +57,20 @@
 
 <script>
 export default {
-    data: () => ({
-      fab: false
-    }),
-    methods: {
-        removeAllPublications: function () {
-            this.$store.dispatch('removeAllPublications')
-        },
-        changeTheme: function () {
-            this.$store.dispatch('darkTheme/switchTheme')
-        },
-        emitOpenNewPublicationDialog: function () {
-          this.$emit('open-new-publication-dialog')
-        }
+  data: () => ({
+    fab: false
+  }),
+  methods: {
+    emitOpenRemoveAllPublicationsDialog: function () {
+      this.$emit('remove-all-publications-dialog')
+    },
+    changeTheme: function () {
+      this.$store.dispatch('darkTheme/switchTheme')
+    },
+    emitOpenNewPublicationDialog: function () {
+      this.$emit('open-new-publication-dialog')
     }
+  }
 }
 </script>
 

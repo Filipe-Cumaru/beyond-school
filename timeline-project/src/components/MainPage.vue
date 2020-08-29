@@ -22,6 +22,22 @@
       </v-card-actions>
     </v-card>
     </v-dialog>
+
+    <!-- Caixa de diálogo para apagar todas publicações na linha do tempo. -->
+    <v-dialog v-model="removeAllPublicationsDialog" persistent scrollable max-width="600px">
+    <v-card>
+      Deseja limpar a linha do tempo?
+      <v-card-actions>
+        <v-btn @click="removeAllPublications">
+          Sim
+        </v-btn>
+        <v-btn @click="removeAllPublicationsDialog = false">
+          Não
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    </v-dialog>
+
       <!-- Componente da barra de status com evento para remoção de
            todas publicações. -->
       <div class="statusbar-container">
@@ -36,7 +52,9 @@
             :userProp="pub.user"></PublicationCard>
         </div>
       </div>
-      <OptionsMenu @open-new-publication-dialog='newPulicationDialog=true'></OptionsMenu>
+      <OptionsMenu 
+        @open-new-publication-dialog='newPulicationDialog=true'
+        @remove-all-publications-dialog='removeAllPublicationsDialog=true'></OptionsMenu>
     </v-main>
 </template>
 
@@ -53,6 +71,7 @@ export default {
   },
   data: () => ({
     newPulicationDialog: false,
+    removeAllPublicationsDialog: false,
     // Texto da publicação.
     newPublicationText: '',
     // Dados da imagem da publicação.
@@ -93,6 +112,10 @@ export default {
       this.newPublicationText = ''
       this.newPublicationImg = undefined
       this.newPulicationDialog = false
+    },
+    removeAllPublications: function () {
+      this.$store.dispatch('removeAllPublications')
+      this.removeAllPublicationsDialog = false
     }
   },
   beforeMount() {
