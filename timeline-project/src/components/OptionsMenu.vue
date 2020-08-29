@@ -26,7 +26,7 @@
         fab
         small
         @click='$router.push(`/profile/Eu`)'>
-        <v-icon>mdi-account</v-icon>
+        <v-icon>mdi-account-details</v-icon>
       </v-btn>
 
     <!-- Botão para a publicação de um novo post.-->
