@@ -15,7 +15,7 @@
           fab
         >
           <v-icon v-if="fab">mdi-close</v-icon>
-          <v-icon v-else>mdi-dots-vertical</v-icon>
+          <v-icon v-else>mdi-menu-open</v-icon>
         </v-btn>
       </template>
     
