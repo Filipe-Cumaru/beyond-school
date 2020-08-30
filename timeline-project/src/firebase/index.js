@@ -15,6 +15,8 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
+export const auth = firebase.auth()
+
 export default function setFirebase (Vue) {
     Object.defineProperty(Vue.prototype, '$firebase', {
         get () {

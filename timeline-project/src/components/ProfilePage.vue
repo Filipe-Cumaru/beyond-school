@@ -30,7 +30,7 @@ export default {
     StatusBarCard
   },
   computed: {
-      ...mapGetters('usersStatus', ['getUserPublicStatus'])
+      ...mapGetters('userManagement', ['getUserPublicStatus'])
   }
 }
 </script>

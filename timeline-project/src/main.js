@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import App from './App.vue'
 import ProfilePage from './components/ProfilePage.vue'
-import MainPage from './components/MainPage.vue'
+// import MainPage from './components/MainPage.vue'
+import Login from './components/Login.vue'
 import vuetify from './plugins/vuetify';
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import VueRouter from 'vue-router'
-import Firebase from './firebase'
+import Firebase, { auth } from './firebase'
 
 Vue.config.productionTip = false
 
@@ -45,14 +46,31 @@ const darkTheme = {
   }
 }
 
-const usersStatus = {
+const userManagement = {
   namespaced: true,
   state: {
+    activeUser: '',
     users: [
       {name: 'Eu', public: true},
       {name: 'Gandalf', public: true},
       {name: 'Theoden', public: false}
     ]
+  },
+  actions: {
+    createNewAccount: async function ({ commit }, newAccountData) {
+      const { email, password } = newAccountData
+      console.log(commit)
+      auth.createUserWithEmailAndPassword(email, password)
+      .then( function (ret) {
+        console.log(ret)
+      })
+      .catch( function (e) {
+        console.log(e)
+      })
+    }
+  },
+  mutations: {
+
   },
   getters: {
     getUserPublicStatus: (state) => (name) => {
@@ -77,7 +95,7 @@ const store = new Vuex.Store({
   },
   modules: {
     darkTheme: darkTheme,
-    usersStatus: usersStatus
+    userManagement: userManagement
   },
   getters: {
     getPublications: function (state) {
@@ -149,7 +167,7 @@ const store = new Vuex.Store({
 const routes = [
   {
     path: '/',
-    component: MainPage
+    component: Login
   },
   {
     path: '/profile/:name',
