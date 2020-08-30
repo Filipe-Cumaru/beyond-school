@@ -107,8 +107,16 @@ export default {
                 this.errorMessage = 'E-mail já cadastrado'
             }
         },
-        loginWithGoogle: function () {
-
+        loginWithGoogle: async function () {
+            const info = await this.$store.dispatch('userManagement/loginWithGoogle')
+            if (info.success) {
+                this.email = ''
+                this.password = ''
+                this.$router.push('/mainpage')
+            }
+            else {
+                console.log(info)
+            }
         }
     }
 }

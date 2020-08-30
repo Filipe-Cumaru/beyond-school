@@ -7,7 +7,7 @@ import vuetify from './plugins/vuetify';
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import VueRouter from 'vue-router'
-import Firebase, { auth } from './firebase'
+import Firebase, { auth, GoogleAuthProvider } from './firebase'
 
 Vue.config.productionTip = false
 
@@ -81,6 +81,22 @@ const userManagement = {
       })
       .catch( function (e) {
         console.log(e)
+        retInfo.errorCode = e.code
+      })
+      return retInfo
+    },
+    loginWithGoogle: async function ({ commit }) {
+      let retInfo = {success: false, errorCode: ''}
+      console.log(commit)
+      const provider = new GoogleAuthProvider()
+      await auth.signInWithPopup(provider)
+      .then(function (result) {
+        console.log(result)
+        retInfo.success = true
+      })
+      .catch(function (e) {
+        console.log(e)
+        retInfo.success = false
         retInfo.errorCode = e.code
       })
       return retInfo
