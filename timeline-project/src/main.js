@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import ProfilePage from './components/ProfilePage.vue'
-// import MainPage from './components/MainPage.vue'
+import MainPage from './components/MainPage.vue'
 import Login from './components/Login.vue'
 import vuetify from './plugins/vuetify';
 import Vuex from 'vuex'
@@ -49,7 +49,6 @@ const darkTheme = {
 const userManagement = {
   namespaced: true,
   state: {
-    activeUser: '',
     users: [
       {name: 'Eu', public: true},
       {name: 'Gandalf', public: true},
@@ -70,11 +69,35 @@ const userManagement = {
         retInfo.errorCode = e.code
       })
       return retInfo
-    }
-  },
-  mutations: {
-    setCreateAccountError: function (state, val) {
-      state.createAccountError = val
+    },
+    loginWithEmail: async function ({ commit }, accountData) {
+      const { email, password } = accountData
+      let retInfo = { success: false, errorCode: '' }
+      console.log(commit)
+      await auth.signInWithEmailAndPassword(email, password)
+      .then( function (ret) {
+        console.log(ret)
+        retInfo.success = true
+      })
+      .catch( function (e) {
+        console.log(e)
+        retInfo.errorCode = e.code
+      })
+      return retInfo
+    },
+    logout: async function ({ commit }) {
+      let success = false
+      console.log(commit)
+      await auth.signOut()
+      .then( function (ret) {
+        console.log(ret)
+        success = true
+      })
+      .catch( function (e) {
+        console.log(e)
+        success = false
+      })
+      return success
     }
   },
   getters: {
@@ -173,6 +196,10 @@ const routes = [
   {
     path: '/',
     component: Login
+  },
+  {
+    path: '/mainpage',
+    component: MainPage
   },
   {
     path: '/profile/:name',

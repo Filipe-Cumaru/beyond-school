@@ -1,8 +1,8 @@
 <template>
   <v-main>
-    <v-dialog v-model="existentEmailDialog" max-width='600px'>
+    <v-dialog v-model="errorDialog" max-width='600px'>
         <v-container class="grey lighten-5">
-            <h3>E-mail já cadastrado.</h3>
+            <h3>{{ errorMessage }}</h3>
         </v-container>
     </v-dialog>
 
@@ -72,11 +72,27 @@ export default {
             min: v => v.length >= 6 || 'A senha deve conter pelo menos 6 caracteres',
             required: value => !!value || 'Campo obrigatório'
         },
-        existentEmailDialog: false
+        errorDialog: false,
+        errorMessage: ''
     }),
     methods: {
-        loginWithEmail: function () {
-
+        loginWithEmail: async function () {
+            const info = await this.$store.dispatch('userManagement/loginWithEmail', 
+                { email: this.email, password: this.password })
+            console.log(info)
+            if (info.success) {
+                this.email = ''
+                this.password = ''
+                this.$router.push('/mainpage')
+            }
+            else if (info.errorCode === 'auth/wrong-password') {
+                this.errorDialog = true
+                this.errorMessage = 'Senha incorreta'
+            }
+            else if (info.errorCode === 'auth/user-not-found') {
+                this.errorDialog = true
+                this.errorMessage = 'E-mail incorreto'
+            }
         },
         createNewAccount: async function () {
             const info = await this.$store.dispatch('userManagement/createNewAccount', 
@@ -87,7 +103,8 @@ export default {
                 this.newAccountDialog = false
             }
             else if (info.errorCode === 'auth/email-already-in-use') {
-                this.existentEmailDialog = true
+                this.errorDialog = true
+                this.errorMessage = 'E-mail já cadastrado'
             }
         },
         loginWithGoogle: function () {
