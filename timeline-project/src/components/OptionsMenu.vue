@@ -1,4 +1,53 @@
 <template>
+  <v-main>
+    <!-- Caixa de diálogo para apagar todas publicações na linha do tempo. -->
+    <v-dialog v-model="removeAllPublicationsDialog" persistent scrollable max-width="600px">
+    <v-container class="grey lighten-5">
+      <v-row no-gutters>
+        <h3>Deseja apagar todas as publicações da linha do tempo?</h3>
+      </v-row>
+      <v-row>
+        <v-col class="text-center">
+          <v-btn @click="removeAllPublications">
+            Sim
+          </v-btn>
+        </v-col>
+        <v-col class="text-center">
+          <v-btn @click="removeAllPublicationsDialog = false">
+            Não
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+    </v-dialog>
+
+    <!-- Caixa de diálogo para criar uma nova publicação. -->
+    <v-dialog v-model="newPulicationDialog" persistent scrollable max-width="600px">
+      <v-container class="grey lighten-5">
+        <v-textarea
+          v-model='newPublicationText'
+          placeholder="No que você está pensando?">
+        </v-textarea>
+        <v-file-input 
+          prepend-icon='mdi-image'
+          :chips='true'
+          placeholder='Clique para selecionar imagem'
+          @change="setNewPublicationImage"></v-file-input>
+        <v-row>
+          <v-col class="text-center">
+            <v-btn icon color="red" @click="discardChanges">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col class="text-center">
+            <v-btn icon color="success" @click="addNewPublication">
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-dialog>
+
     <!-- Botão flutuante para acessar as opções da aplicação. -->
     <v-speed-dial
       fab
@@ -33,7 +82,7 @@
       <v-btn
           fab
           small
-          @click="emitOpenNewPublicationDialog">
+          @click="newPulicationDialog=true">
           <v-icon>mdi-pencil-plus-outline</v-icon>
       </v-btn>
 
@@ -41,7 +90,7 @@
       <v-btn 
         fab
         small
-        @click="emitOpenRemoveAllPublicationsDialog">
+        @click="removeAllPublicationsDialog=true">
         <v-icon>mdi-trash-can-outline</v-icon>
       </v-btn>
 
@@ -53,22 +102,58 @@
         <v-icon>mdi-brightness-6</v-icon>
       </v-btn>
     </v-speed-dial>
+  </v-main>
 </template>
 
 <script>
 export default {
   data: () => ({
-    fab: false
+    fab: false,
+    newPulicationDialog: false,
+    removeAllPublicationsDialog: false,
+    // Texto da publicação.
+    newPublicationText: '',
+    // Dados da imagem da publicação.
+    newPublicationImg: undefined
   }),
   methods: {
-    emitOpenRemoveAllPublicationsDialog: function () {
-      this.$emit('remove-all-publications-dialog')
-    },
     changeTheme: function () {
       this.$store.dispatch('darkTheme/switchTheme')
     },
-    emitOpenNewPublicationDialog: function () {
-      this.$emit('open-new-publication-dialog')
+    // Método para adicionar uma nova publicação ao store.
+    addNewPublication: function () {
+      if (this.newPublicationText !== '' || this.newPublicationImg !== undefined) {
+        this.$store.dispatch('addPublication', { text: this.newPublicationText, img: this.newPublicationImg })
+        this.newPublicationText = ''
+        this.newPublicationImg = undefined
+      }
+      this.newPulicationDialog = false
+    },
+    // Método para carregar uma nova imagem.
+    setNewPublicationImage: function (file) {
+      // Se uma imagem foi selecionada...
+      if (file !== undefined) {
+        // ... o arquivo é lido como base64 e o valor é
+        // repassado ao componente pai usando o localStorage.
+        var reader = new FileReader()
+        reader.readAsDataURL(file)
+        this.newPublicationImg = file.name
+        reader.onload = function () {
+          localStorage.setItem(file.name, reader.result)
+        }
+        reader.onerror = function (error) {
+          console.log(error)
+        }
+      }
+    },
+    discardChanges: function () {
+      this.newPublicationText = ''
+      this.newPublicationImg = undefined
+      this.newPulicationDialog = false
+    },
+    removeAllPublications: function () {
+      this.$store.dispatch('removeAllPublications')
+      this.removeAllPublicationsDialog = false
     }
   }
 }
