@@ -59,18 +59,23 @@ const userManagement = {
   actions: {
     createNewAccount: async function ({ commit }, newAccountData) {
       const { email, password } = newAccountData
+      let retInfo = { success: false, errorCode: '' }
       console.log(commit)
-      auth.createUserWithEmailAndPassword(email, password)
+      await auth.createUserWithEmailAndPassword(email, password)
       .then( function (ret) {
         console.log(ret)
+        retInfo.success = true
       })
       .catch( function (e) {
-        console.log(e)
+        retInfo.errorCode = e.code
       })
+      return retInfo
     }
   },
   mutations: {
-
+    setCreateAccountError: function (state, val) {
+      state.createAccountError = val
+    }
   },
   getters: {
     getUserPublicStatus: (state) => (name) => {
