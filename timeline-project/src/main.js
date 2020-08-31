@@ -7,7 +7,7 @@ import vuetify from './plugins/vuetify';
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import VueRouter from 'vue-router'
-import Firebase, { auth, GoogleAuthProvider } from './firebase'
+import Firebase, { auth, GoogleAuthProvider, firestore } from './firebase'
 
 Vue.config.productionTip = false
 
