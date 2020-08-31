@@ -7,6 +7,7 @@ import vuetify from './plugins/vuetify';
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import VueRouter from 'vue-router'
+// eslint-disable-next-line
 import Firebase, { auth, GoogleAuthProvider, firestore, storage } from './firebase'
 
 Vue.config.productionTip = false
@@ -204,9 +205,13 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    // eslint-disable-next-line
-    addPublication: async function ({  }, publication) {
+    addPublication: async function ({ state }, publication) {
       let success = false
+      const imgFile = publication.img
+      if (imgFile !== '') {
+        publication.img = imgFile.name
+        await storage.ref().child(`${state.userManagement.name}/${publication.img}`).put(imgFile)
+      }
       await firestore.collection('publications').doc(String(publication.timestamp)).set(publication)
       .then(function (ret) {
         console.log(ret)

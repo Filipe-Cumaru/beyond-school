@@ -123,7 +123,7 @@ export default {
     },
     // Método para adicionar uma nova publicação ao store.
     addNewPublication: async function () {
-      if (this.newPublicationText !== '' || this.newPublicationImg !== undefined) {
+      if (this.newPublicationText !== '' || this.newPublicationImg !== '') {
         const publication = {
           text: this.newPublicationText,
           img: this.newPublicationImg,
@@ -135,28 +135,12 @@ export default {
           this.newPublicationText = ''
           this.newPublicationImg = undefined
         }
-        else {
-          console.log("fudeu valendo")
-        }
       }
       this.newPulicationDialog = false
     },
     // Método para carregar uma nova imagem.
     setNewPublicationImage: function (file) {
-      // Se uma imagem foi selecionada...
-      if (file !== undefined) {
-        // ... o arquivo é lido como base64 e o valor é
-        // repassado ao componente pai usando o localStorage.
-        var reader = new FileReader()
-        reader.readAsDataURL(file)
-        this.newPublicationImg = file.name
-        reader.onload = function () {
-          localStorage.setItem(file.name, reader.result)
-        }
-        reader.onerror = function (error) {
-          console.log(error)
-        }
-      }
+      this.newPublicationImg = file
     },
     discardChanges: function () {
       this.newPublicationText = ''
