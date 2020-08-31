@@ -106,6 +106,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data: () => ({
     fab: false,
@@ -114,18 +115,29 @@ export default {
     // Texto da publicação.
     newPublicationText: '',
     // Dados da imagem da publicação.
-    newPublicationImg: undefined
+    newPublicationImg: ''
   }),
   methods: {
     changeTheme: function () {
       this.$store.dispatch('darkTheme/switchTheme')
     },
     // Método para adicionar uma nova publicação ao store.
-    addNewPublication: function () {
+    addNewPublication: async function () {
       if (this.newPublicationText !== '' || this.newPublicationImg !== undefined) {
-        this.$store.dispatch('addPublication', { text: this.newPublicationText, img: this.newPublicationImg })
-        this.newPublicationText = ''
-        this.newPublicationImg = undefined
+        const publication = {
+          text: this.newPublicationText,
+          img: this.newPublicationImg,
+          timestamp: Date.now(),
+          username: this.getName
+        }
+        const success = this.$store.dispatch('addPublication', publication)
+        if (success) {
+          this.newPublicationText = ''
+          this.newPublicationImg = undefined
+        }
+        else {
+          console.log("fudeu valendo")
+        }
       }
       this.newPulicationDialog = false
     },
@@ -155,6 +167,9 @@ export default {
       this.$store.dispatch('removeAllPublications')
       this.removeAllPublicationsDialog = false
     }
+  },
+  computed: {
+    ...mapGetters('userManagement', ['getName'])
   }
 }
 </script>

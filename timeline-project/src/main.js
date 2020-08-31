@@ -177,20 +177,22 @@ const userManagement = {
         return u.name === name
       }).pop().public
       return isPublic
+    },
+    getName: function (state) {
+      return state.name
     }
   }
 }
 
 const store = new Vuex.Store({
   state: {
-    publications: [
-      { text: 'YOU SHALL NOT PASS!', img: undefined, user: 'Gandalf', timestamp: undefined},
-      { text: 'All We Have To Do Is Decide What To Do With The Time That Is Given To Us.', img: undefined, user: 'Gandalf', timestamp: undefined},
-      { text: `Arise, arise, Riders of Théoden!
-        Fell deeds awake: fire and slaughter! Spears shall be shaken,
-        Shields shall be splintered, a sword-day, a red day, ere the sun rises!
-        Ride now, ride now! Ride to Gondor! Death! Death! Death! Forth Eorlingas`, img: undefined, user: 'Theoden', timestamp: undefined}
-    ]
+    publications: []
+      // { text: 'YOU SHALL NOT PASS!', img: undefined, user: 'Gandalf', timestamp: undefined},
+      // { text: 'All We Have To Do Is Decide What To Do With The Time That Is Given To Us.', img: undefined, user: 'Gandalf', timestamp: undefined},
+      // { text: `Arise, arise, Riders of Théoden!
+      //   Fell deeds awake: fire and slaughter! Spears shall be shaken,
+      //   Shields shall be splintered, a sword-day, a red day, ere the sun rises!
+      //   Ride now, ride now! Ride to Gondor! Death! Death! Death! Forth Eorlingas`, img: undefined, user: 'Theoden', timestamp: undefined}
   },
   modules: {
     darkTheme: darkTheme,
@@ -198,6 +200,8 @@ const store = new Vuex.Store({
   },
   getters: {
     getPublications: function (state) {
+      // Mudar para recuperar publicações do firebase que não 
+      // foram feitas pelo usuário.
       return state.publications
     },
     getPublicationsFromUser: (state) => (user) => {
@@ -208,8 +212,19 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    addPublication: function ({ commit }, publication) {
-      commit('pushPublication', publication)
+    // eslint-disable-next-line
+    addPublication: async function ({  }, publication) {
+      let success = false
+      await firestore.collection('publications').doc(String(publication.timestamp)).set(publication)
+      .then(function (ret) {
+        console.log(ret)
+        success = true
+      })
+      .catch(function (error) {
+        console.log(error)
+        success = false
+      })
+      return success
     },
     removeAllPublications: function ({ commit }) {
       commit('clearPublications')
