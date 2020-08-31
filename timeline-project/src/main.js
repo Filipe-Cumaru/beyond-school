@@ -187,12 +187,6 @@ const userManagement = {
 const store = new Vuex.Store({
   state: {
     publications: []
-      // { text: 'YOU SHALL NOT PASS!', img: undefined, user: 'Gandalf', timestamp: undefined},
-      // { text: 'All We Have To Do Is Decide What To Do With The Time That Is Given To Us.', img: undefined, user: 'Gandalf', timestamp: undefined},
-      // { text: `Arise, arise, Riders of Théoden!
-      //   Fell deeds awake: fire and slaughter! Spears shall be shaken,
-      //   Shields shall be splintered, a sword-day, a red day, ere the sun rises!
-      //   Ride now, ride now! Ride to Gondor! Death! Death! Death! Forth Eorlingas`, img: undefined, user: 'Theoden', timestamp: undefined}
   },
   modules: {
     darkTheme: darkTheme,
@@ -200,8 +194,6 @@ const store = new Vuex.Store({
   },
   getters: {
     getPublications: function (state) {
-      // Mudar para recuperar publicações do firebase que não 
-      // foram feitas pelo usuário.
       return state.publications
     },
     getPublicationsFromUser: (state) => (user) => {
@@ -234,9 +226,31 @@ const store = new Vuex.Store({
     },
     editPublicationText: function ({ commit }, data) {
       commit('updatePublicationText', data)
+    },
+    queryPublications: async function ({ commit }) {
+      let allPubs = []
+      await firestore.collection('publications').where('username', '>', '').get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data())
+          allPubs.push(doc.data())
+        })
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+      commit('setPublications', allPubs)
     }
   },
   mutations: {
+    setPublications: function (state, pubs) {
+      state.publications = []
+      pubs.forEach(function (elem) {
+        if (elem.username !== state.userManagement.name) {
+          state.publications.push(elem)
+        }
+      })
+    },
     pushPublication: function (state, publication) {
       let newPub = { text: publication.text, img: undefined, user: 'Eu'}
       if (publication.img !== undefined) {

@@ -12,7 +12,7 @@
         <PublicationCard 
           :textProp="pub.text" 
           :imgProp="pub.img"
-          :userProp="pub.user"></PublicationCard>
+          :userProp="pub.username"></PublicationCard>
       </div>
     </div>
 
@@ -36,8 +36,9 @@ export default {
     ...mapGetters(['getPublications']),
     ...mapGetters('darkTheme', ['getEnableDarkTheme'])
   },
-  beforeMount() {
+  async beforeMount() {
     this.$vuetify.theme.dark = this.getEnableDarkTheme
+    this.$store.dispatch('queryPublications')
   }
 }
 </script>
