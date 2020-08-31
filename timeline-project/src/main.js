@@ -49,17 +49,16 @@ const darkTheme = {
 const userManagement = {
   namespaced: true,
   state: {
-    users: [
-      {name: 'Eu', public: true},
-      {name: 'Gandalf', public: true},
-      {name: 'Theoden', public: false}
-    ]
+    name: '',
+    isPrivate: false
   },
   actions: {
+    // FIXME: É possível criar uma conta e não conseguir registrar
+    // o usuário no Firebase.
     createNewAccount: async function ({ commit }, newAccountData) {
-      const { email, password } = newAccountData
+      const { email, password, name, isPrivate } = newAccountData
       let retInfo = { success: false, errorCode: '' }
-      console.log(commit)
+
       await auth.createUserWithEmailAndPassword(email, password)
       .then( function (ret) {
         console.log(ret)
@@ -68,6 +67,21 @@ const userManagement = {
       .catch( function (e) {
         retInfo.errorCode = e.code
       })
+      
+      if (retInfo.success) {
+        await firestore.collection('users').add({ name: name, isPrivate: isPrivate })
+        .then(function (ret) {
+          console.log('Entrada do BD criada', ret)
+          commit('setName', name)
+          commit('setIsPrivate', isPrivate)
+        })
+        .catch(function (error) {
+          console.log(error)
+          retInfo.success = false
+          retInfo.errorCode = 'firebase'
+        })
+      }
+
       return retInfo
     },
     loginWithEmail: async function ({ commit }, accountData) {
@@ -116,6 +130,14 @@ const userManagement = {
       return success
     }
   },
+  mutations: {
+    setName: function (state, name) {
+      state.name = name
+    },
+    setIsPrivate: function (state, isPrivate) {
+      state.isPrivate =isPrivate
+    }
+  },
   getters: {
     getUserPublicStatus: (state) => (name) => {
       const isPublic = state.users.filter(function (u) {
@@ -129,12 +151,12 @@ const userManagement = {
 const store = new Vuex.Store({
   state: {
     publications: [
-      { text: 'YOU SHALL NOT PASS!', img: undefined, user: 'Gandalf' },
-      { text: 'All We Have To Do Is Decide What To Do With The Time That Is Given To Us.', img: undefined, user: 'Gandalf' },
+      { text: 'YOU SHALL NOT PASS!', img: undefined, user: 'Gandalf', timestamp: undefined},
+      { text: 'All We Have To Do Is Decide What To Do With The Time That Is Given To Us.', img: undefined, user: 'Gandalf', timestamp: undefined},
       { text: `Arise, arise, Riders of Théoden!
         Fell deeds awake: fire and slaughter! Spears shall be shaken,
         Shields shall be splintered, a sword-day, a red day, ere the sun rises!
-        Ride now, ride now! Ride to Gondor! Death! Death! Death! Forth Eorlingas`, img: undefined, user: 'Theoden'}
+        Ride now, ride now! Ride to Gondor! Death! Death! Death! Forth Eorlingas`, img: undefined, user: 'Theoden', timestamp: undefined}
     ]
   },
   modules: {

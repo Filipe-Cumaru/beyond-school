@@ -8,6 +8,17 @@
 
     <v-dialog v-model="newAccountDialog" persistent scrollable max-width="600px">
     <v-container class="grey lighten-5">
+      <v-text-field
+        v-model="newAccountName"
+        label="Nome do usuário"
+        :rules='[rules.required]'>
+      </v-text-field>
+      <v-checkbox
+        v-model="newAccountPrivate"
+        label="Perfil privado"
+        hint="Se selecionado, seu perfil não será visto pelos outros usuários."
+        :persistent-hint='true'>
+      </v-checkbox>
       <v-text-field 
         v-model="newAccountEmail"
         label="E-mail"
@@ -70,6 +81,8 @@ export default {
         newAccountDialog: false,
         newAccountEmail: '',
         newAccountPassword: '',
+        newAccountName: '',
+        newAccountPrivate: false,
         rules: {
             min: v => v.length >= 6 || 'A senha deve conter pelo menos 6 caracteres',
             required: value => !!value || 'Campo obrigatório'
@@ -87,26 +100,30 @@ export default {
                 this.password = ''
                 this.$router.push('/mainpage')
             }
-            else if (info.errorCode === 'auth/wrong-password') {
+            else if (info.errorCode === 'auth/wrong-password' || info.errorCode === 'auth/user-not-found') {
                 this.errorDialog = true
-                this.errorMessage = 'Senha incorreta'
-            }
-            else if (info.errorCode === 'auth/user-not-found') {
-                this.errorDialog = true
-                this.errorMessage = 'E-mail incorreto'
+                this.errorMessage = 'E-mail ou senha incorreta'
             }
         },
         createNewAccount: async function () {
             const info = await this.$store.dispatch('userManagement/createNewAccount', 
-                { email: this.newAccountEmail, password: this.newAccountPassword })
+                { email: this.newAccountEmail, 
+                  password: this.newAccountPassword, 
+                  name: this.newAccountName,
+                  isPrivate: this.newAccountPrivate })
             if (info.success) {
                 this.newAccountEmail = ''
                 this.newAccountPassword = ''
+                this.newAccountName = ''
                 this.newAccountDialog = false
             }
             else if (info.errorCode === 'auth/email-already-in-use') {
                 this.errorDialog = true
                 this.errorMessage = 'E-mail já cadastrado'
+            }
+            else if (info.errorCode === 'firebase') {
+              this.errorDialog = true
+              this.errorMessage = 'Problema no registro da conta no servidor. Tente novamente.'
             }
         },
         loginWithGoogle: async function () {
