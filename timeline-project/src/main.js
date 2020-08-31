@@ -59,6 +59,8 @@ const userManagement = {
       const { email, password, name, isPrivate } = newAccountData
       let retInfo = { success: false, errorCode: '' }
 
+      console.log(commit)
+
       await auth.createUserWithEmailAndPassword(email, password)
       .then( function (ret) {
         console.log(ret)
@@ -69,11 +71,9 @@ const userManagement = {
       })
       
       if (retInfo.success) {
-        await firestore.collection('users').add({ name: name, isPrivate: isPrivate })
+        await firestore.collection('users').doc(email).set({ name: name, isPrivate: isPrivate })
         .then(function (ret) {
           console.log('Entrada do BD criada', ret)
-          commit('setName', name)
-          commit('setIsPrivate', isPrivate)
         })
         .catch(function (error) {
           console.log(error)
@@ -87,7 +87,7 @@ const userManagement = {
     loginWithEmail: async function ({ commit }, accountData) {
       const { email, password } = accountData
       let retInfo = { success: false, errorCode: '' }
-      console.log(commit)
+
       await auth.signInWithEmailAndPassword(email, password)
       .then( function (ret) {
         console.log(ret)
@@ -97,15 +97,30 @@ const userManagement = {
         console.log(e)
         retInfo.errorCode = e.code
       })
+
+      if (retInfo.success) {
+        await firestore.collection('users').doc(email).get()
+        .then(function (doc) {
+          commit('setName', doc.data().name)
+          commit('setIsPrivate', doc.data().isPrivate)
+        })
+        .catch(function (error) {
+          console.log(error)
+          retInfo.success = false
+          retInfo.errorCode = 'firebase'
+        })
+      }
+
       return retInfo
     },
     loginWithGoogle: async function ({ commit }) {
       let retInfo = {success: false, errorCode: ''}
-      console.log(commit)
       const provider = new GoogleAuthProvider()
+      let googleAccountInfo = undefined
+
       await auth.signInWithPopup(provider)
       .then(function (result) {
-        console.log(result)
+        googleAccountInfo = result
         retInfo.success = true
       })
       .catch(function (e) {
@@ -113,6 +128,24 @@ const userManagement = {
         retInfo.success = false
         retInfo.errorCode = e.code
       })
+
+      if (retInfo.success) {
+        const email = googleAccountInfo.additionalUserInfo.profile.email
+        const name = googleAccountInfo.additionalUserInfo.profile.given_name
+        const isPrivate = false
+        await firestore.collection('users').doc(email).set({ name: name, isPrivate: isPrivate })
+        .then(function (ret) {
+          console.log('Entrada do BD criada', ret)
+          commit('setName', name)
+          commit('setIsPrivate', isPrivate)
+        })
+        .catch(function (error) {
+          console.log(error)
+          retInfo.success = false
+          retInfo.errorCode = 'firebase'
+        })
+      }
+
       return retInfo
     },
     logout: async function ({ commit }) {

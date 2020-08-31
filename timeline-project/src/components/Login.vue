@@ -74,70 +74,74 @@
 
 <script>
 export default {
-    data: () => ({
-        email: '',
-        password: '',
-        showPassword: false,
-        newAccountDialog: false,
-        newAccountEmail: '',
-        newAccountPassword: '',
-        newAccountName: '',
-        newAccountPrivate: false,
-        rules: {
-            min: v => v.length >= 6 || 'A senha deve conter pelo menos 6 caracteres',
-            required: value => !!value || 'Campo obrigatório'
-        },
-        errorDialog: false,
-        errorMessage: ''
-    }),
-    methods: {
-        loginWithEmail: async function () {
-            const info = await this.$store.dispatch('userManagement/loginWithEmail', 
-                { email: this.email, password: this.password })
-            console.log(info)
-            if (info.success) {
-                this.email = ''
-                this.password = ''
-                this.$router.push('/mainpage')
-            }
-            else if (info.errorCode === 'auth/wrong-password' || info.errorCode === 'auth/user-not-found') {
-                this.errorDialog = true
-                this.errorMessage = 'E-mail ou senha incorreta'
-            }
-        },
-        createNewAccount: async function () {
-            const info = await this.$store.dispatch('userManagement/createNewAccount', 
-                { email: this.newAccountEmail, 
-                  password: this.newAccountPassword, 
-                  name: this.newAccountName,
-                  isPrivate: this.newAccountPrivate })
-            if (info.success) {
-                this.newAccountEmail = ''
-                this.newAccountPassword = ''
-                this.newAccountName = ''
-                this.newAccountDialog = false
-            }
-            else if (info.errorCode === 'auth/email-already-in-use') {
-                this.errorDialog = true
-                this.errorMessage = 'E-mail já cadastrado'
-            }
-            else if (info.errorCode === 'firebase') {
-              this.errorDialog = true
-              this.errorMessage = 'Problema no registro da conta no servidor. Tente novamente.'
-            }
-        },
-        loginWithGoogle: async function () {
-            const info = await this.$store.dispatch('userManagement/loginWithGoogle')
-            if (info.success) {
-                this.email = ''
-                this.password = ''
-                this.$router.push('/mainpage')
-            }
-            else {
-                console.log(info)
-            }
-        }
+  data: () => ({
+    email: '',
+    password: '',
+    showPassword: false,
+    newAccountDialog: false,
+    newAccountEmail: '',
+    newAccountPassword: '',
+    newAccountName: '',
+    newAccountPrivate: false,
+    rules: {
+        min: v => v.length >= 6 || 'A senha deve conter pelo menos 6 caracteres',
+        required: value => !!value || 'Campo obrigatório'
+    },
+    errorDialog: false,
+    errorMessage: ''
+  }),
+  methods: {
+    loginWithEmail: async function () {
+      const info = await this.$store.dispatch('userManagement/loginWithEmail', 
+          { email: this.email, password: this.password })
+      console.log(info)
+      if (info.success) {
+        this.email = ''
+        this.password = ''
+        this.$router.push('/mainpage')
+      }
+      else if (info.errorCode === 'auth/wrong-password' || info.errorCode === 'auth/user-not-found') {
+        this.errorDialog = true
+        this.errorMessage = 'E-mail ou senha incorreta'
+      }
+      else if (info.errorCode === 'firebase') {
+        this.errorDialog = true
+        this.errorMessage = 'Problema no registro da conta no servidor. Tente novamente.'
+      }
+    },
+    createNewAccount: async function () {
+      const info = await this.$store.dispatch('userManagement/createNewAccount', 
+          { email: this.newAccountEmail, 
+            password: this.newAccountPassword, 
+            name: this.newAccountName,
+            isPrivate: this.newAccountPrivate })
+      if (info.success) {
+        this.newAccountEmail = ''
+        this.newAccountPassword = ''
+        this.newAccountName = ''
+        this.newAccountDialog = false
+      }
+      else if (info.errorCode === 'auth/email-already-in-use') {
+        this.errorDialog = true
+        this.errorMessage = 'E-mail já cadastrado'
+      }
+      else if (info.errorCode === 'firebase') {
+        this.errorDialog = true
+        this.errorMessage = 'Problema no registro da conta no servidor. Tente novamente.'
+      }
+    },
+    loginWithGoogle: async function () {
+      const info = await this.$store.dispatch('userManagement/loginWithGoogle')
+      if (info.success) {
+          this.email = ''
+          this.password = ''
+          this.$router.push('/mainpage')
+      }
+      else {
+          console.log(info)
+      }
     }
+  }
 }
 </script>
 
