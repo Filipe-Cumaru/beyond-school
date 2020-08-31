@@ -36,7 +36,9 @@
     </v-container>
     </v-dialog>
 
-    <v-img src="../assets/beyond_logo.png"></v-img>
+    <v-img class="center" width="80px" height="55px" src="../assets/beyond_logo.png"></v-img>
+
+    <h2 class="text-center">BeyondTimeline</h2>
 
     <v-text-field v-model="email" label="E-mail"></v-text-field>
 
@@ -123,5 +125,10 @@ export default {
 </script>
 
 <style>
-
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
 </style>
