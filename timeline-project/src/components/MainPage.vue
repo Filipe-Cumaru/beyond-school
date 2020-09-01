@@ -36,9 +36,11 @@ export default {
     ...mapGetters(['getPublications']),
     ...mapGetters('darkTheme', ['getEnableDarkTheme'])
   },
-  async beforeMount() {
+  async created() {
+    await this.$store.dispatch('queryPublications')
+  },
+  beforeMount() {
     this.$vuetify.theme.dark = this.getEnableDarkTheme
-    this.$store.dispatch('queryPublications')
   }
 }
 </script>

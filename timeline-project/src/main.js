@@ -209,8 +209,8 @@ const store = new Vuex.Store({
       let success = false
       const imgFile = publication.img
       if (imgFile !== '') {
-        publication.img = imgFile.name
-        await storage.ref().child(`${state.userManagement.name}/${publication.img}`).put(imgFile)
+        publication.img = `${state.userManagement.name}/${imgFile.name}`
+        await storage.ref().child(publication.img).put(imgFile)
       }
       await firestore.collection('publications').doc(String(publication.timestamp)).set(publication)
       .then(function (ret) {

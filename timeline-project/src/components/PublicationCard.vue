@@ -44,8 +44,8 @@
         </v-card-title>
         <v-card-text>{{ textProp }}</v-card-text>
         <!-- Componente para a exibição da imagem, se existente. -->
-        <v-img v-if='imgProp != undefined'
-            :src='imgProp'
+        <v-img v-if='imgProp != ""'
+            :src='imgURL'
             height='100%'
             width='100%'></v-img>
     </v-card>
@@ -53,13 +53,15 @@
 </template>
 
 <script>
+import { storage } from '../firebase'
 export default {
     data() {
         return {
             // Texto modificado, caso edição.
             modifiedText: this.$props.textProp,
             // Flag para ativar/desativar a caixa de diálogo de edição.
-            dialog: false
+            dialog: false,
+            imgURL: undefined
         }
     },
     props: ['textProp', 'imgProp', 'userProp'],
@@ -74,6 +76,12 @@ export default {
         },
         openProfilePage: function (username) {
             this.$router.push(`/profile/${username}`)
+        }
+    },
+    async created() {
+        if (this.$props.imgProp !== '') {
+            const url = await storage.ref().child(this.$props.imgProp).getDownloadURL()
+            this.imgURL = url
         }
     }
 }
