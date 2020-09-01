@@ -22,7 +22,7 @@
     </v-dialog>
 
     <!-- Caixa de diálogo para criar uma nova publicação. -->
-    <v-dialog v-model="newPulicationDialog" persistent scrollable max-width="600px">
+    <v-dialog v-model="newPublicationDialog" persistent scrollable max-width="600px">
       <v-container class="grey lighten-5">
         <v-textarea
           v-model='newPublicationText'
@@ -69,12 +69,10 @@
       </template>
     
     <!-- Botão de acesso à página do perfil do usuário. -->
-    <!-- REFACTOR: Tornar acesso à página do perfil dinâmico, i.e.,
-        dependente do nome do usuário logado. -->
       <v-btn 
         fab
         small
-        @click='$router.push(`/profile/Eu`)'>
+        @click='$router.push(`/profile/${getName}`)'>
         <v-icon>mdi-account-details</v-icon>
       </v-btn>
 
@@ -82,7 +80,7 @@
       <v-btn
           fab
           small
-          @click="newPulicationDialog=true">
+          @click="newPublicationDialog=true">
           <v-icon>mdi-pencil-plus-outline</v-icon>
       </v-btn>
 
@@ -110,7 +108,7 @@ import { mapGetters } from 'vuex'
 export default {
   data: () => ({
     fab: false,
-    newPulicationDialog: false,
+    newPublicationDialog: false,
     removeAllPublicationsDialog: false,
     // Texto da publicação.
     newPublicationText: '',
@@ -133,10 +131,10 @@ export default {
         const success = this.$store.dispatch('addPublication', publication)
         if (success) {
           this.newPublicationText = ''
-          this.newPublicationImg = undefined
+          this.newPublicationImg = ''
         }
       }
-      this.newPulicationDialog = false
+      this.newPublicationDialog = false
     },
     // Método para carregar uma nova imagem.
     setNewPublicationImage: function (file) {
@@ -145,7 +143,7 @@ export default {
     discardChanges: function () {
       this.newPublicationText = ''
       this.newPublicationImg = undefined
-      this.newPulicationDialog = false
+      this.newPublicationDialog = false
     },
     removeAllPublications: function () {
       this.$store.dispatch('removeAllPublications')

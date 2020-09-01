@@ -7,7 +7,6 @@ import vuetify from './plugins/vuetify';
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import VueRouter from 'vue-router'
-// eslint-disable-next-line
 import Firebase, { auth, GoogleAuthProvider, firestore, storage } from './firebase'
 
 Vue.config.productionTip = false
@@ -169,16 +168,10 @@ const userManagement = {
       state.name = name
     },
     setIsPrivate: function (state, isPrivate) {
-      state.isPrivate =isPrivate
+      state.isPrivate = isPrivate
     }
   },
   getters: {
-    getUserPublicStatus: (state) => (name) => {
-      const isPublic = state.users.filter(function (u) {
-        return u.name === name
-      }).pop().public
-      return isPublic
-    },
     getName: function (state) {
       return state.name
     }
@@ -187,7 +180,8 @@ const userManagement = {
 
 const store = new Vuex.Store({
   state: {
-    publications: []
+    publications: [],
+    profilePublications: []
   },
   modules: {
     darkTheme: darkTheme,
@@ -197,11 +191,8 @@ const store = new Vuex.Store({
     getPublications: function (state) {
       return state.publications
     },
-    getPublicationsFromUser: (state) => (user) => {
-      const pubsFromUser = state.publications.filter(function (p) {
-        return p.user === user
-      })
-      return pubsFromUser
+    getPublicationsFromUser: function (state) {
+      return state.profilePublications
     }
   },
   actions: {
@@ -237,7 +228,6 @@ const store = new Vuex.Store({
       await firestore.collection('publications').where('username', '>', '').get()
       .then(function (querySnapshot) {
         querySnapshot.forEach((doc) => {
-          console.log(doc.data())
           allPubs.push(doc.data())
         })
       })
@@ -245,6 +235,33 @@ const store = new Vuex.Store({
         console.log(error)
       })
       commit('setPublications', allPubs)
+    },
+    queryUserPublications: async function ({ commit }, name) {
+      let myPubs = []
+      await firestore.collection('publications').where('username', '==', name).get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach((doc) => {
+          myPubs.push(doc.data())
+        })
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+      commit('setProfilePublications', myPubs)
+    },
+    // eslint-disable-next-line
+    queryUserIsPrivate: async function ({  }, name) {
+      let userIsPrivate = false
+      await firestore.collection('users').where('name', '==', name).get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach((doc) => {
+          userIsPrivate = doc.data().isPrivate
+        })
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+      return userIsPrivate
     }
   },
   mutations: {
@@ -256,13 +273,10 @@ const store = new Vuex.Store({
         }
       })
     },
-    pushPublication: function (state, publication) {
-      let newPub = { text: publication.text, img: undefined, user: 'Eu'}
-      if (publication.img !== undefined) {
-        const imgData = localStorage.getItem(publication.img)
-        newPub.img = imgData
-      }
-      state.publications.push(newPub)
+    setProfilePublications: function (state, pubs) {
+      pubs.forEach((elem) => {
+        state.profilePublications.push(elem)
+      })
     },
     clearPublications: function (state) {
       state.publications = []

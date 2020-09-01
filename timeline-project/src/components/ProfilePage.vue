@@ -5,13 +5,13 @@
       </div>
       <!-- Inserção das publicações do usuário. -->
       <div 
-        v-if="getUserPublicStatus($route.params.name)"
+        v-if="!userIsPrivate"
         class='publications-container'>
-        <div v-for='(pub, i) in $store.getters.getPublicationsFromUser($route.params.name)' :key='i'>
+        <div v-for='(pub, i) in getPublicationsFromUser' :key='i'>
           <PublicationCard 
             :textProp="pub.text" 
             :imgProp="pub.img"
-            :userProp="pub.user" ></PublicationCard>
+            :userProp="pub.username" ></PublicationCard>
         </div>
       </div>
       <div v-else class="warning-container">
@@ -25,12 +25,21 @@ import PublicationCard from "./PublicationCard.vue"
 import StatusBarCard from "./StatusBarCard.vue"
 import { mapGetters } from 'vuex'
 export default {
+  data: () => ({
+    userIsPrivate: false
+  }),
   components: {
     PublicationCard,
     StatusBarCard
   },
   computed: {
-      ...mapGetters('userManagement', ['getUserPublicStatus'])
+      ...mapGetters('userManagement', ['getUserPublicStatus']),
+      ...mapGetters(['getPublicationsFromUser'])
+  },
+  async created() {
+    await this.$store.dispatch('queryUserPublications', this.$route.params.name)
+    const isPrivate = await this.$store.dispatch('queryUserIsPrivate', this.$route.params.name)
+    this.userIsPrivate = isPrivate
   }
 }
 </script>
