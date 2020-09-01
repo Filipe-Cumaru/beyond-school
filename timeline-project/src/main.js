@@ -293,11 +293,17 @@ const store = new Vuex.Store({
           state.publications.push(elem)
         }
       })
+      state.publications = state.publications.sort((v1, v2) => {
+        return v1.timestamp - v2.timestamp
+      })
     },
     setProfilePublications: function (state, pubs) {
       state.profilePublications = []
       pubs.forEach((elem) => {
         state.profilePublications.push(elem)
+      })
+      state.profilePublications = state.profilePublications.sort((v1, v2) => {
+        return v1.timestamp - v2.timestamp
       })
     },
     clearPublications: function (state) {
