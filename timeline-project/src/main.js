@@ -220,7 +220,28 @@ const store = new Vuex.Store({
     removeSinglePublication: function ({ commit }, data) {
       commit('deletePublication', data)
     },
-    editPublicationText: function ({ commit }, data) {
+    editPublicationText: async function ({ commit }, data) {
+      let myPubs = []
+
+      await firestore.collection('publications')
+      .where('username', '==', data.name)
+      .where('text', '==', data.oldText)
+      .get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach((doc) => {
+          myPubs.push(doc.data())
+        })
+      })
+
+      const oldPub = myPubs.pop()
+      const newPub = {
+        text: data.newText,
+        img: oldPub.img,
+        username: oldPub.username,
+        timestamp: oldPub.timestamp
+      }
+      await firestore.collection('publications').doc(String(newPub.timestamp)).set(newPub)
+
       commit('updatePublicationText', data)
     },
     queryPublications: async function ({ commit }) {
@@ -274,6 +295,7 @@ const store = new Vuex.Store({
       })
     },
     setProfilePublications: function (state, pubs) {
+      state.profilePublications = []
       pubs.forEach((elem) => {
         state.profilePublications.push(elem)
       })
@@ -297,15 +319,13 @@ const store = new Vuex.Store({
     },
     updatePublicationText: function (state, data) {
       let i = 0
-      const oldText = data[0]
-      const img = data[1]
-      for (let p of state.publications) {
-        if (p.text === oldText && p.img === img) {
+      for (let p of state.profilePublications) {
+        if (p.timestamp === data.timestamp) {
           break
         }
         i++
       }
-      state.publications[i].text = data[2]
+      state.publications[i].text = data.newText
     }
   },
   plugins: [vuexPersist.plugin]

@@ -74,8 +74,13 @@ export default {
         removeSinglePublication: function () {
             this.$store.dispatch('removeSinglePublication', [this.$props.textProp, this.$props.imgProp])
         },
-        saveModifiedText: function () {
-            this.$store.dispatch('editPublicationText', [this.$props.textProp, this.$props.imgProp, this.modifiedText])
+        saveModifiedText: async function () {
+            await this.$store.dispatch('editPublicationText', {
+                oldText: this.$props.textProp, 
+                newText: this.modifiedText,
+                img: this.$props.imgProp,
+                name: this.$props.userProp
+            })
             this.dialog = false
         },
         openProfilePage: function (username) {
