@@ -36,7 +36,7 @@
                     <v-list-item @click="removeSinglePublication">
                         Ocultar publicação
                     </v-list-item>
-                    <v-list-item @click="dialog = true">
+                    <v-list-item v-if="userProp === getName" @click="dialog = true">
                         Editar publicação
                     </v-list-item>
                 </v-list>
@@ -54,6 +54,7 @@
 
 <script>
 import { storage } from '../firebase'
+import { mapGetters } from 'vuex'
 export default {
     data() {
         return {
@@ -63,6 +64,9 @@ export default {
             dialog: false,
             imgURL: undefined
         }
+    },
+    computed: {
+        ...mapGetters('userManagement', ['getName'])
     },
     props: ['textProp', 'imgProp', 'userProp'],
     methods: {
