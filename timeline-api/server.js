@@ -49,7 +49,7 @@ async function checkDataProps (data) {
     return { text, img, timestamp, username }
 }
 
-app.get('/publication', async (req, res) => {
+app.get('/post', async (req, res) => {
     try {
         const docs = []
         const querySnapshot = await firestore.collection('publications').get()
@@ -62,7 +62,7 @@ app.get('/publication', async (req, res) => {
     }
 })
 
-app.get('/publication/:id', async (req, res) => {
+app.get('/post/:id', async (req, res) => {
     const id = req.params.id
     try {
         const doc = await firestore.collection('publications').doc(id).get()
@@ -77,7 +77,7 @@ app.get('/publication/:id', async (req, res) => {
     }
 })
 
-app.post('/publication', async (req, res) => {
+app.post('/post', async (req, res) => {
     let data
     try {
         data = await checkDataProps(req.body)
@@ -96,7 +96,7 @@ app.post('/publication', async (req, res) => {
 
 })
 
-app.put('/publication/:id', async (req, res) => {
+app.put('/post/:id', async (req, res) => {
     let data
     try {
         data = await checkDataProps(req.body)
@@ -114,7 +114,7 @@ app.put('/publication/:id', async (req, res) => {
     }
 })
 
-app.delete('/publication/:id', async (req, res) => {
+app.delete('/post/:id', async (req, res) => {
     const id = req.params.id
     try {
         await firestore.collection('publications').doc(id).delete()
