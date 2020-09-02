@@ -5,9 +5,15 @@ const { firestore } = require('./firebase')
 const app = express()
 app.use(bodyParser.json())
 
-function checkDataProps (data) {
+async function checkDataProps (data) {
     const { text, img, timestamp, username } = data
     const imgFilePathRegex = /^[A-Za-z0-9]+[\/][A-Za-z0-9]+$/
+    const allUsernames = []
+
+    const querySnapshot = await firestore.collection('users').get()
+    querySnapshot.docs.forEach((doc) => {
+        allUsernames.push(doc.data().name)
+    })
 
     if (!text) {
         throw new Error('Missing text field.')
@@ -35,6 +41,9 @@ function checkDataProps (data) {
     }
     if (!img.match(imgFilePathRegex) && img !== '') {
         throw new Error('img field does not describe a valid path.')
+    }
+    if (!allUsernames.includes(username)) {
+        throw new Error('username does not describe an existent user.')
     }
 
     return { text, img, timestamp, username }
@@ -71,7 +80,7 @@ app.get('/publication/:id', async (req, res) => {
 app.post('/publication', async (req, res) => {
     let data
     try {
-        data = checkDataProps(req.body)
+        data = await checkDataProps(req.body)
     } catch (e) {
         res.status(422).send({ error: e.message })
         return
@@ -90,7 +99,7 @@ app.post('/publication', async (req, res) => {
 app.put('/publication/:id', async (req, res) => {
     let data
     try {
-        data = checkDataProps(req.body)
+        data = await checkDataProps(req.body)
     } catch (e) {
         res.status(422).send({ error: e.message })
         return
