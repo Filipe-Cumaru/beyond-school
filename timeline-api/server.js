@@ -12,7 +12,7 @@ function checkDataProps (data) {
     if (!text) {
         throw new Error('Missing text field.')
     }
-    if (!img) {
+    if (!img && img !== '') {
         throw new Error('Missing img field.')
     }
     if (!timestamp) {
@@ -21,24 +21,37 @@ function checkDataProps (data) {
     if (!username) {
         throw new Error('Missing username field.')
     }
-    if (typeof text === 'string' || text instanceof String) {
+    if (typeof text !== 'string') {
         throw new Error('text field must be string.')
     }
-    if (typeof img !== 'string' || !(img instanceof String)) {
+    if (typeof img !== 'string') {
         throw new Error('img field must be String.')
     }
-    if (typeof timestamp !== 'number' || !(timestamp instanceof Number)) {
+    if (typeof timestamp !== 'number') {
         throw new Error('timestamp field must be Number.')
     }
-    if (typeof username !== 'string' || !(username instanceof String)) {
+    if (typeof username !== 'string') {
         throw new Error('img field must be String.')
     }
-    if (!img.match(imgFilePathRegex)) {
+    if (!img.match(imgFilePathRegex) && img !== '') {
         throw new Error('img field does not describe a valid path.')
     }
 
     return { text, img, timestamp, username }
 }
+
+app.get('/publication', async (req, res) => {
+    try {
+        const docs = []
+        const querySnapshot = await firestore.collection('publications').get()
+        querySnapshot.docs.forEach((doc) => {
+            docs.push(doc.data())
+        })
+        res.status(200).send(docs)
+    } catch (e) {
+        res.status(500).send('Internal error.')
+    }
+})
 
 app.get('/publication/:id', async (req, res) => {
     const id = req.params.id
@@ -55,16 +68,17 @@ app.get('/publication/:id', async (req, res) => {
     }
 })
 
-app.post('/publication/:id', async (req, res) => {
+app.post('/publication', async (req, res) => {
+    let data
     try {
         data = checkDataProps(req.body)
     } catch (e) {
-        e.status(422).send({ error: error.message })
+        res.status(422).send({ error: e.message })
         return
     }
 
     try {
-        const doc = await firestore.collection('publications').add(data)
+        await firestore.collection('publications').add(data)
         res.status(201).send()
     }
     catch (e) {
@@ -73,11 +87,12 @@ app.post('/publication/:id', async (req, res) => {
 
 })
 
-app.put('publication/:id', async (req, res) => {
+app.put('/publication/:id', async (req, res) => {
+    let data
     try {
         data = checkDataProps(req.body)
     } catch (e) {
-        e.status(422).send({ error: error.message })
+        res.status(422).send({ error: e.message })
         return
     }
 
@@ -90,12 +105,16 @@ app.put('publication/:id', async (req, res) => {
     }
 })
 
-app.delete('publication/:id', async (req, res) => {
+app.delete('/publication/:id', async (req, res) => {
     const id = req.params.id
     try {
-        const doc = await firestore.collection('publications').doc(id).delete()
+        await firestore.collection('publications').doc(id).delete()
         res.status(204).send()
     } catch (e) {
         res.status(500).send('Internal error.')
     }
+})
+
+app.listen(4000, () => {
+    console.log('Server started. Listening...')
 })
