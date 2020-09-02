@@ -7,7 +7,9 @@ app.use(bodyParser.json())
 
 async function checkDataProps (data) {
     const { text, img, timestamp, username } = data
-    const imgFilePathRegex = /^[A-Za-z0-9]+[\/][A-Za-z0-9]+$/
+    // A string que descreve o arquivo de imagem deve ser da forma
+    // usuario/arquivo.xxx
+    const imgFilePathRegex = /^[A-Za-z0-9\-" "]+[\/][A-Za-z0-9\-" "]+[\.][A-Za-z0-9]+$/
     const allUsernames = []
 
     const querySnapshot = await firestore.collection('users').get()
@@ -15,6 +17,7 @@ async function checkDataProps (data) {
         allUsernames.push(doc.data().name)
     })
 
+    // Verificação se o objeto contém todos os campos necessários.
     if (!text) {
         throw new Error('Missing text field.')
     }
@@ -27,6 +30,8 @@ async function checkDataProps (data) {
     if (!username) {
         throw new Error('Missing username field.')
     }
+
+    // Verificação de tipo dos campos dos objetos.
     if (typeof text !== 'string') {
         throw new Error('text field must be string.')
     }
@@ -39,9 +44,14 @@ async function checkDataProps (data) {
     if (typeof username !== 'string') {
         throw new Error('img field must be String.')
     }
+
+    // Verificação da string img para garantir que um caminho válido
+    // é descrito.
     if (!img.match(imgFilePathRegex) && img !== '') {
         throw new Error('img field does not describe a valid path.')
     }
+
+    // Verificação de que o nome de usuário informado existe no BD.
     if (!allUsernames.includes(username)) {
         throw new Error('username does not describe an existent user.')
     }
@@ -49,12 +59,21 @@ async function checkDataProps (data) {
     return { text, img, timestamp, username }
 }
 
+/**
+ * @description Implementação de um endpoint GET.
+ * 
+ * Retorna todas as publcações registradas no banco de dados Firebase.
+ * Em caso de sucesso, retorna o código 200 (OK).
+ * Caso negativo, retorna 500 (Internal server error).
+ */
 app.get('/post', async (req, res) => {
     try {
         const docs = []
         const querySnapshot = await firestore.collection('publications').get()
         querySnapshot.docs.forEach((doc) => {
-            docs.push(doc.data())
+            let docData = doc.data()
+            docData.id = doc.id
+            docs.push(docData)
         })
         res.status(200).send(docs)
     } catch (e) {
@@ -62,6 +81,14 @@ app.get('/post', async (req, res) => {
     }
 })
 
+/**
+ * @description Implementação de um endpoint GET.
+ * 
+ * Retorna a publicação com ID "id" do banco de dados.
+ * Em caso de sucesso, retorna o código 200 (OK).
+ * Caso a publicação não exista, retorna 404 (Not found).
+ * Caso ocorra um erro no processamento da requisição, retorna 500 (Internal server error).
+ */
 app.get('/post/:id', async (req, res) => {
     const id = req.params.id
     try {
@@ -77,6 +104,15 @@ app.get('/post/:id', async (req, res) => {
     }
 })
 
+/**
+ * @description Implementação de um endpoint POST.
+ * 
+ * Insere uma nova publicação no banco de dados.
+ * Em caso de sucesso, retorna o código 201 (Created).
+ * Caso os dados informados na requisição possuam algum erro sintático ou semântico, 
+ * retorna 422 (Unprocessable entity).
+ * Em caso de erro no processamento da consulta ao BD, retorna 500 (Internal server error).
+ */
 app.post('/post', async (req, res) => {
     let data
     try {
@@ -87,8 +123,8 @@ app.post('/post', async (req, res) => {
     }
 
     try {
-        await firestore.collection('publications').add(data)
-        res.status(201).send()
+        const doc = await firestore.collection('publications').add(data)
+        res.status(201).send({ id: doc.id })
     }
     catch (e) {
         res.status(500).send('Internal error.')
@@ -96,6 +132,15 @@ app.post('/post', async (req, res) => {
 
 })
 
+/**
+ * @description Implementação de um endpoint PUT.
+ * 
+ * Atualiza uma publicação existente no banco de dados.
+ * Em caso de sucesso, retorna o código 204 (No content).
+ * Caso os dados informados na requisição possuam algum erro sintático ou semântico, 
+ * retorna 422 (Unprocessable entity).
+ * Em caso de erro no processamento da consulta ao BD, retorna 500 (Internal server error).
+ */
 app.put('/post/:id', async (req, res) => {
     let data
     try {
@@ -114,6 +159,13 @@ app.put('/post/:id', async (req, res) => {
     }
 })
 
+/**
+ * @description Implementação de um endpoint DELETE.
+ * 
+ * Exclui uma publicação do banco de dados.
+ * Em caso de sucesso, retorna o código 204 (No content).
+ * Em caso de erro no processamento da consulta ao BD, retorna 500 (Internal server error).
+ */
 app.delete('/post/:id', async (req, res) => {
     const id = req.params.id
     try {
