@@ -11,6 +11,9 @@
         <v-icon>mdi-cloud</v-icon>
         <v-card-title>BeyondTimeline</v-card-title>
         <v-spacer></v-spacer>
+        <v-btn icon @click="refreshScreen">
+            <v-icon>mdi-refresh</v-icon>
+        </v-btn>
         <v-btn icon @click="logout">
             <v-icon>mdi-logout</v-icon>
         </v-btn>
@@ -31,6 +34,14 @@ export default {
             }
             else {
                 this.errorDialog = true
+            }
+        },
+        refreshScreen: async function () {
+            if (this.$props.enableGoBackButtonProp) {
+                await this.$store.dispatch('queryUserPublications', this.$route.params.name)
+            }
+            else {
+                await this.$store.dispatch('queryPublications')
             }
         }
     }
