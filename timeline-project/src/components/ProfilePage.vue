@@ -7,7 +7,7 @@
       <div 
         v-if="!userIsPrivate"
         class='publications-container'>
-        <div v-for='(pub, i) in getPublicationsFromUser' :key='i'>
+        <div v-for='pub of getPublicationsFromUser' :key='pub.timestamp'>
           <PublicationCard 
             :textProp="pub.text" 
             :imgProp="pub.img"

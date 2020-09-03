@@ -8,7 +8,7 @@
 
     <!-- Inserção das publicações já existentes. -->
     <div class='publications-container'>
-      <div v-for='(pub, i) in getPublications' :key='i'>
+      <div v-for='pub of getPublications' :key='pub.timestamp'>
         <PublicationCard 
           :textProp="pub.text" 
           :imgProp="pub.img"

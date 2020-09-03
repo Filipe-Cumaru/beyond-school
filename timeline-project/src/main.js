@@ -19,14 +19,15 @@ const vuexPersist = new VuexPersistence({
   key: 'timeline',
   storage: window.localStorage,
   modules: [
-    'darkTheme'
+    'darkTheme',
+    'userManagement'
   ]
 })
 
 const darkTheme = {
   namespaced: true,
   state: {
-    enableDarkTheme: true
+    enableDarkTheme: false
   },
   getters: {
     getEnableDarkTheme: function (state) {
@@ -49,12 +50,9 @@ const darkTheme = {
 const userManagement = {
   namespaced: true,
   state: {
-    name: '',
-    isPrivate: false
+    activeUser: null
   },
   actions: {
-    // FIXME: É possível criar uma conta e não conseguir registrar
-    // o usuário no Firebase.
     createNewAccount: async function ({ commit }, newAccountData) {
       const { email, password, name, isPrivate } = newAccountData
       let retInfo = { success: false, errorCode: '' }
@@ -71,7 +69,11 @@ const userManagement = {
       })
       
       if (retInfo.success) {
-        await firestore.collection('users').doc(email).set({ name: name, isPrivate: isPrivate })
+        await firestore.collection('users').add({ 
+          name: name, 
+          isPrivate: isPrivate,
+          email: email
+        })
         .then(function (ret) {
           console.log('Entrada do BD criada', ret)
         })
@@ -99,10 +101,11 @@ const userManagement = {
       })
 
       if (retInfo.success) {
-        await firestore.collection('users').doc(email).get()
-        .then(function (doc) {
-          commit('setName', doc.data().name)
-          commit('setIsPrivate', doc.data().isPrivate)
+        await firestore.collection('users').where('email', '==', email).get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach((doc) => {
+            commit('setActiveUser', { data: doc.data(), id: doc.id })
+          })
         })
         .catch(function (error) {
           console.log(error)
@@ -130,14 +133,15 @@ const userManagement = {
       })
 
       if (retInfo.success) {
-        const email = googleAccountInfo.additionalUserInfo.profile.email
-        const name = googleAccountInfo.additionalUserInfo.profile.given_name
-        const isPrivate = false
-        await firestore.collection('users').doc(email).set({ name: name, isPrivate: isPrivate })
-        .then(function (ret) {
-          console.log('Entrada do BD criada', ret)
-          commit('setName', name)
-          commit('setIsPrivate', isPrivate)
+        const newUser = {
+          email: googleAccountInfo.additionalUserInfo.profile.email,
+          name: googleAccountInfo.additionalUserInfo.profile.given_name,
+          isPrivate: false
+        }
+        await firestore.collection('users').add(newUser)
+        .then(function (doc) {
+          console.log('Entrada do BD criada', doc)
+          commit('setActiveUser', { data: newUser, id: doc.id })
         })
         .catch(function (error) {
           console.log(error)
@@ -160,20 +164,26 @@ const userManagement = {
         console.log(e)
         success = false
       })
+      commit('unsetActiveUser')
       return success
     }
   },
   mutations: {
-    setName: function (state, name) {
-      state.name = name
+    setActiveUser: function (state, payload) {
+      state.activeUser = {
+        name: payload.data.name,
+        isPrivate: payload.data.isPrivate,
+        email: payload.data.email,
+        id: payload.id
+      }
     },
-    setIsPrivate: function (state, isPrivate) {
-      state.isPrivate = isPrivate
+    unsetActiveUser: function (state) {
+      state.activeUser = null
     }
   },
   getters: {
     getName: function (state) {
-      return state.name
+      return state.activeUser.name
     }
   }
 }
@@ -200,12 +210,12 @@ const store = new Vuex.Store({
       let success = false
       const imgFile = publication.img
       if (imgFile !== '') {
-        publication.img = `${state.userManagement.name}/${imgFile.name}`
+        publication.img = `${state.userManagement.activeUser.name}/${imgFile.name}`
         await storage.ref().child(publication.img).put(imgFile)
       }
-      await firestore.collection('publications').doc(String(publication.timestamp)).set(publication)
-      .then(function (ret) {
-        console.log(ret)
+      await firestore.collection('publications').add(publication)
+      .then(function (doc) {
+        console.log(doc)
         success = true
       })
       .catch(function (error) {
@@ -246,7 +256,7 @@ const store = new Vuex.Store({
     },
     queryPublications: async function ({ commit }) {
       let allPubs = []
-      await firestore.collection('publications').where('username', '>', '').get()
+      await firestore.collection('publications').get()
       .then(function (querySnapshot) {
         querySnapshot.forEach((doc) => {
           allPubs.push(doc.data())
@@ -289,7 +299,7 @@ const store = new Vuex.Store({
     setPublications: function (state, pubs) {
       state.publications = []
       pubs.forEach(function (elem) {
-        if (elem.username !== state.userManagement.name) {
+        if (elem.username !== state.userManagement.activeUser.name) {
           state.publications.push(elem)
         }
       })
