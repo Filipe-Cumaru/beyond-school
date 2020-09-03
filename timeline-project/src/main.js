@@ -357,7 +357,7 @@ const routes = [
     component: MainPage
   },
   {
-    path: '/profile/:name',
+    path: '/profile/:name/:isOwner',
     component: ProfilePage
   }
 ]

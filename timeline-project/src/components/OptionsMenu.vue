@@ -72,7 +72,7 @@
       <v-btn 
         fab
         small
-        @click='$router.push(`/profile/${getName}`)'>
+        @click='$router.push(`/profile/${getName}/${true}`)'>
         <v-icon>mdi-account-details</v-icon>
       </v-btn>
 

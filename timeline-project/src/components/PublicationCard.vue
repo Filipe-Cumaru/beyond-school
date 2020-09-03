@@ -84,7 +84,7 @@ export default {
             this.dialog = false
         },
         openProfilePage: function (username) {
-            this.$router.push(`/profile/${username}`)
+            this.$router.push(`/profile/${username}/${false}`)
         }
     },
     async created() {

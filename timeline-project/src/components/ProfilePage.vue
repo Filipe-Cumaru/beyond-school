@@ -5,7 +5,7 @@
       </div>
       <!-- Inserção das publicações do usuário. -->
       <div 
-        v-if="!userIsPrivate"
+        v-if="!userIsPrivate || ($route.params.isOwner === 'true')"
         class='publications-container'>
         <div v-for='pub of getPublicationsFromUser' :key='pub.timestamp'>
           <PublicationCard 
@@ -40,6 +40,8 @@ export default {
     await this.$store.dispatch('queryUserPublications', this.$route.params.name)
     const isPrivate = await this.$store.dispatch('queryUserIsPrivate', this.$route.params.name)
     this.userIsPrivate = isPrivate
+    console.log('profile', isPrivate, this.$route.params.isOwner)
+    console.log(typeof this.$route.params.isOwner)
   }
 }
 </script>
