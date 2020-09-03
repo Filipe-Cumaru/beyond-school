@@ -2,3 +2,6 @@
 test-images/
 timeline-api/beyond-timeline-d9c3d-firebase-adminsdk-mbaff-468d034360.json
 timeline-api/node_modules
+timeline-api/.gcloudignore
+timeline-project/.firebaserc
+timeline-project/firebase.json
