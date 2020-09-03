@@ -8,6 +8,7 @@ import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import VueRouter from 'vue-router'
 import Firebase, { auth, GoogleAuthProvider, firestore, storage } from './firebase'
+import axios from 'axios'
 
 Vue.config.productionTip = false
 
@@ -191,7 +192,8 @@ const userManagement = {
 const store = new Vuex.Store({
   state: {
     publications: [],
-    profilePublications: []
+    profilePublications: [],
+    sharedPublications: []
   },
   modules: {
     darkTheme: darkTheme,
@@ -223,6 +225,22 @@ const store = new Vuex.Store({
         success = false
       })
       return success
+    },
+    postSharedPublication: async function ({ state }, publication) {
+      const remoteUrl = 'https://petbookinterface.rj.r.appspot.com/send'
+      const imgFile = publication.path
+      if (imgFile !== '') {
+        const imgPath = `${state.userManagement.activeUser.name}/${imgFile.name}`
+        await storage.ref().child(imgPath).put(imgFile)
+        const url = await storage.ref().child(imgPath).getDownloadURL()
+        publication.path = url
+      }
+      try {
+        const response = await axios.post(remoteUrl, publication)
+        console.log(response)
+      } catch (error) {
+        console.log(error)
+      }
     },
     removeAllPublications: function ({ commit }) {
       commit('clearPublications')

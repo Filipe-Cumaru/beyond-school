@@ -99,6 +99,14 @@
         @click="changeTheme">
         <v-icon>mdi-brightness-6</v-icon>
       </v-btn>
+
+      <!-- Botão para compartilhar uma publicação com outro app usando a API fornecida. -->
+      <v-btn 
+        fab
+        small
+        @click="newPublicationDialog=true; sharing=true">
+        <v-icon>mdi-share-variant</v-icon>
+      </v-btn>
     </v-speed-dial>
   </v-main>
 </template>
@@ -108,6 +116,7 @@ import { mapGetters } from 'vuex'
 export default {
   data: () => ({
     fab: false,
+    sharing: false,
     newPublicationDialog: false,
     removeAllPublicationsDialog: false,
     // Texto da publicação.
@@ -121,18 +130,35 @@ export default {
     },
     // Método para adicionar uma nova publicação ao store.
     addNewPublication: async function () {
-      if (this.newPublicationText !== '' || this.newPublicationImg !== '') {
-        const publication = {
-          text: this.newPublicationText,
-          img: this.newPublicationImg,
-          timestamp: Date.now(),
-          username: this.getName
+      if (!this.sharing) {
+        if (this.newPublicationText !== '' || this.newPublicationImg !== '') {
+          const publication = {
+            text: this.newPublicationText,
+            img: this.newPublicationImg,
+            timestamp: Date.now(),
+            username: this.getName
+          }
+          const success = this.$store.dispatch('addPublication', publication)
+          if (success) {
+            this.newPublicationText = ''
+            this.newPublicationImg = ''
+          }
         }
-        const success = this.$store.dispatch('addPublication', publication)
-        if (success) {
+      }
+      else {
+        console.log('posting shared pub')
+        if (this.newPublicationText !== '' || this.newPublicationImg !== '') {
+          const sharedPublication = {
+            text: this.newPublicationText,
+            path: this.newPublicationImg,
+            date: Date.now(),
+            user: this.getName
+          }
+          this.$store.dispatch('postSharedPublication', sharedPublication)
           this.newPublicationText = ''
           this.newPublicationImg = ''
         }
+        this.sharing = false
       }
       this.newPublicationDialog = false
     },
