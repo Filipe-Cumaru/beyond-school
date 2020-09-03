@@ -7,8 +7,6 @@ app.use(bodyParser.json())
 
 async function checkDataProps (data) {
     const { text, img, timestamp, username } = data
-    // A string que descreve o arquivo de imagem deve ser da forma
-    // usuario/arquivo.xxx
     const imgFilePathRegex = /^[A-Za-z0-9\-" "]+[\/][A-Za-z0-9\-" "]+[\.][A-Za-z0-9]+$/
     const allUsernames = []
 
@@ -52,7 +50,6 @@ async function checkDataProps (data) {
     }
 
     // Verificação de que o nome de usuário informado existe no BD.
-    // REVIEW: Um usuário externo não pode saber todos os usuários cadastrados.
     if (!allUsernames.includes(username)) {
         throw new Error('username does not describe an existent user.')
     }
