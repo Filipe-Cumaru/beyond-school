@@ -5,3 +5,5 @@ timeline-api/node_modules
 timeline-api/.gcloudignore
 timeline-project/.firebaserc
 timeline-project/firebase.json
+doc_API.*
+timeline-project/.firebase
