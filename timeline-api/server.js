@@ -1,13 +1,15 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const { firestore } = require('./firebase')
+const cors = require('cors')
 
 const app = express()
 app.use(bodyParser.json())
+app.use(cors())
 
 async function checkDataProps (data) {
     const { text, img, timestamp, username } = data
-    const imgFilePathRegex = /^[A-Za-z0-9\-" "]+[\/][A-Za-z0-9\-" "]+[\.][A-Za-z0-9]+$/
+    // const imgFilePathRegex = /^[A-Za-z0-9\-" "]+[\/][A-Za-z0-9\-" "]+[\.][A-Za-z0-9]+$/
     const allUsernames = []
 
     const querySnapshot = await firestore.collection('users').get()
@@ -45,9 +47,9 @@ async function checkDataProps (data) {
 
     // Verificação da string img para garantir que um caminho válido
     // é descrito.
-    if (!img.match(imgFilePathRegex) && img !== '') {
-        throw new Error('img field does not describe a valid path.')
-    }
+    // if (!img.match(imgFilePathRegex) && img !== '') {
+    //     throw new Error('img field does not describe a valid path.')
+    // }
 
     // Verificação de que o nome de usuário informado existe no BD.
     if (!allUsernames.includes(username)) {
