@@ -257,18 +257,18 @@ const store = new Vuex.Store({
       .get()
       .then(function (querySnapshot) {
         querySnapshot.forEach((doc) => {
-          myPubs.push(doc.data())
+          myPubs.push({ data: doc.data(), id: doc.id })
         })
       })
 
       const oldPub = myPubs.pop()
       const newPub = {
         text: data.newText,
-        img: oldPub.img,
-        username: oldPub.username,
-        timestamp: oldPub.timestamp
+        img: oldPub.data.img,
+        username: oldPub.data.username,
+        timestamp: oldPub.data.timestamp
       }
-      await firestore.collection('publications').doc(String(newPub.timestamp)).set(newPub)
+      await firestore.collection('publications').doc(oldPub.id).set(newPub)
 
       commit('updatePublicationText', data)
     },

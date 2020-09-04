@@ -88,9 +88,16 @@ export default {
         }
     },
     async created() {
+        // eslint-disable-next-line
+        const imgFilePathRegex = /^[A-Za-z0-9\-" "]+[\/][A-Za-z0-9\-" "]+[\.][A-Za-z0-9]+$/
         if (this.$props.imgProp !== '') {
-            const url = await storage.ref().child(this.$props.imgProp).getDownloadURL()
-            this.imgURL = url
+            if (this.$props.imgProp.match(imgFilePathRegex)) {
+                const url = await storage.ref().child(this.$props.imgProp).getDownloadURL()
+                this.imgURL = url
+            }
+            else {
+                this.imgURL =  this.$props.imgProp
+            }
         }
     }
 }

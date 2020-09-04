@@ -151,6 +151,7 @@ export default {
           const sharedPublication = {
             text: this.newPublicationText,
             path: this.newPublicationImg,
+            pathPerfil: "/perfil/perfilDefault.jpg",
             date: Date.now(),
             user: this.getName
           }
