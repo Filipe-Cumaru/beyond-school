@@ -39,6 +39,9 @@
                     <v-list-item v-if="userProp === getName" @click="dialog = true">
                         Editar publicação
                     </v-list-item>
+                    <v-list-item @click="sharePublication">
+                        Compartilhar publicação
+                    </v-list-item>
                 </v-list>
             </v-menu>
         </v-card-title>
@@ -85,6 +88,16 @@ export default {
         },
         openProfilePage: function (username) {
             this.$router.push(`/profile/${username}/${false}`)
+        },
+        sharePublication: async function () {
+            const sharedPublication = {
+                text: this.$props.textProp,
+                path: this.imgURL,
+                pathPerfil: "/perfil/perfilDefault.jpg",
+                date: Date.now(),
+                user: this.userProp
+            }
+            await this.$store.dispatch('postExistingSharedPublication', sharedPublication)
         }
     },
     async created() {

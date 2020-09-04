@@ -242,6 +242,16 @@ const store = new Vuex.Store({
         console.log(error)
       }
     },
+    // eslint-disable-next-line
+    postExistingSharedPublication: async function ({  }, publication) {
+      const remoteUrl = 'https://petbookinterface.rj.r.appspot.com/send'
+      try {
+        const response = await axios.post(remoteUrl, publication)
+        console.log(response)
+      } catch (error) {
+        console.log(error)
+      }
+    },
     removeAllPublications: function ({ commit }) {
       commit('clearPublications')
     },
