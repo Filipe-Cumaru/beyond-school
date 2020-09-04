@@ -9,13 +9,7 @@ app.use(cors())
 
 async function checkDataProps (data) {
     const { text, img, timestamp, username } = data
-    // const imgFilePathRegex = /^[A-Za-z0-9\-" "]+[\/][A-Za-z0-9\-" "]+[\.][A-Za-z0-9]+$/
     const allUsernames = []
-
-    const querySnapshot = await firestore.collection('users').get()
-    querySnapshot.docs.forEach((doc) => {
-        allUsernames.push(doc.data().name)
-    })
 
     // Verificação se o objeto contém todos os campos necessários.
     if (!text) {
@@ -43,17 +37,6 @@ async function checkDataProps (data) {
     }
     if (typeof username !== 'string') {
         throw new Error('img field must be String.')
-    }
-
-    // Verificação da string img para garantir que um caminho válido
-    // é descrito.
-    // if (!img.match(imgFilePathRegex) && img !== '') {
-    //     throw new Error('img field does not describe a valid path.')
-    // }
-
-    // Verificação de que o nome de usuário informado existe no BD.
-    if (!allUsernames.includes(username)) {
-        throw new Error('username does not describe an existent user.')
     }
 
     return { text, img, timestamp, username }
